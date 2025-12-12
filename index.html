@@ -1,0 +1,2785 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Community Hospital - Nursing Board</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #0d7bff;
+        --blue-deep: #0a4fb8;
+        --paper: #ffffff;
+        --sheet-border: #d5d8e0;
+        --cell-border: #e1e6ef;
+        --yellow: #fff8d6;
+        --muted: #6b7484;
+        --text: #111827;
+        --surface: #f8faff;
+        --shadow: 0 16px 60px rgba(15, 23, 42, 0.12);
+        --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+        --board-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100vh;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+      body {
+        margin: 0;
+        background: #eef2f9;
+        font-family: Rubik, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        color: var(--text);
+        padding: 2px;
+        font-size: 11px;
+      }
+
+      /* Paper sheet */
+      .sheet {
+        width: 100vw;
+        min-height: 100vh;
+        margin: 0;
+        background: var(--paper);
+        border: 1px solid var(--sheet-border);
+        box-shadow: var(--shadow);
+        border-radius: 12px;
+        padding: 12px;
+        box-sizing: border-box;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(13, 123, 255, 0.1),
+          rgba(10, 79, 184, 0.06)
+        );
+        border: 1px solid #dbe4f3;
+        box-shadow: var(--shadow-soft);
+      }
+      .hdr-left,
+      .hdr-right {
+        width: 220px;
+      }
+      .hdr-center {
+        flex: 1;
+        text-align: center;
+      }
+      .label {
+        font-size: 13px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .input-line {
+        border-bottom: 2px solid var(--cell-border);
+        display: inline-block;
+        padding: 6px 10px;
+        min-width: 140px;
+      }
+      .title {
+        font-weight: 700;
+        font-size: 30px;
+        color: var(--blue-deep);
+        letter-spacing: 2px;
+      }
+      .title small {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      /* Main grid */
+      .main {
+        display: grid;
+        grid-template-columns: 2fr 330px;
+        gap: 6px;
+        margin-top: 8px;
+        min-height: calc(100vh - 8px);
+        height: calc(100vh - 8px);
+        overflow: hidden;
+        transform-origin: top left;
+        transform: scale(var(--board-scale));
+        width: 100%;
+      }
+
+      .panel {
+        background: transparent;
+        height: 100%;
+      }
+      .table-wrap {
+        border: 1px solid var(--cell-border);
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        padding: 8px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), var(--shadow-soft);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .info-card {
+        background: linear-gradient(135deg, rgba(13, 123, 255, 0.08), rgba(10, 79, 184, 0.04));
+        border: 1px solid #dbe4f3;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: var(--shadow-soft);
+        margin: 10px 0;
+      }
+      .info-card h3 {
+        margin: 0 0 8px;
+        color: #0b3f78;
+      }
+      .info-card p {
+        margin: 0 0 6px;
+        color: var(--text);
+        line-height: 1.5;
+      }
+      .info-card ul {
+        margin: 6px 0;
+        padding-left: 18px;
+        color: var(--text);
+      }
+      .main > aside.panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+        overflow: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        table-layout: fixed;
+        height: 100%;
+      }
+      thead th {
+        background: #eaf2ff;
+        color: var(--blue-deep);
+        padding: 4px 3px;
+        border: 1px solid var(--cell-border);
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+        letter-spacing: 0.01em;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+      }
+      tbody td {
+        padding: 3px 3px;
+        border: 1px solid var(--cell-border);
+        vertical-align: middle;
+        word-break: break-word;
+        background: #fff;
+        transition: background 120ms ease, transform 120ms ease;
+      }
+      tbody tr:nth-child(odd) td {
+        background: #f7f9fc;
+      }
+      tbody tr:hover td {
+        background: #eef5ff;
+      }
+      .bed-table td.room,
+      .bed-table th.room {
+        font-weight: 700;
+        color: #0b3f78;
+      }
+      .bed-table th.room,
+      .bed-table td.room {
+        width: 70px;
+      }
+      .bed-table th.status,
+      .bed-table td.status {
+        width: 60px;
+        text-align: center;
+      }
+      .bed-table th.round,
+      .bed-table td.round {
+        width: 100px;
+        min-width: 100px;
+      }
+      .bed-table th.nurse,
+      .bed-table td.nurse {
+        width: 120px;
+      }
+      .bed-table th.cna,
+      .bed-table td.cna {
+        width: 120px;
+      }
+      .bed-table th.time,
+      .bed-table td.time {
+        width: 90px;
+      }
+      .bed-table th.patient,
+      .bed-table td.patient {
+        width: 190px;
+      }
+      .bed-table th.physician,
+      .bed-table td.physician {
+        width: 120px;
+      }
+      .bed-table th.sp,
+      .bed-table td.sp {
+        width: 18ch;
+        white-space: normal;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      .rounding-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        font-size: 10px;
+        line-height: 1.25;
+      }
+      .round-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 5px;
+        border-radius: 8px;
+        font-weight: 700;
+        background: #eef2ff;
+        color: #0b3f78;
+      }
+      .round-badge.soon {
+        background: #fff7e6;
+        color: #a15a00;
+      }
+      .round-badge.due {
+        background: #ffe8e8;
+        color: #b91c1c;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      .round-badge.critical {
+        background: #ffe0e0;
+        color: #991b1b;
+        animation: pulse 1s ease-in-out infinite;
+      }
+      .round-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .round-progress {
+        width: 100%;
+        height: 4px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        overflow: hidden;
+        display: none;
+      }
+      .round-progress div {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4f8dfd, #0d7bff);
+        transition: width 0.2s ease;
+      }
+      .round-progress.soon div {
+        background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      }
+      .round-progress.due div,
+      .round-progress.critical div {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+      }
+      .round-meta {
+        color: var(--muted);
+        font-size: 9px;
+        display: none;
+      }
+      .rounding-cell:hover .round-progress,
+      .rounding-cell:hover .round-meta {
+        display: block;
+      }
+      /* Focus styles for inputs/buttons */
+      .cell-input:focus,
+      button:focus {
+        outline: 2px solid var(--blue);
+        outline-offset: 1px;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
+      .cell-input {
+        width: 100%;
+        border: 1px solid #d5dce8;
+        background: #ffffff;
+        color: var(--text);
+        font: inherit;
+        padding: 4px 6px;
+        border-radius: 6px;
+        transition: border-color 120ms ease, box-shadow 120ms ease;
+      }
+      .cell-input:focus {
+        border-color: var(--blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 123, 255, 0.15);
+      }
+      .cell-input.nurse-input {
+        font-weight: 700;
+        color: #0b3f78;
+      }
+      /* Nurse color chips (light palette) */
+      .cell-input.nurse-input.green { background: #e8f7ee; color: #0f7a3c; border-color: #c5e6d2; }
+      .cell-input.nurse-input.purple { background: #f2ecff; color: #5b3bb2; border-color: #ded1ff; }
+      .cell-input.nurse-input.orange { background: #fff2e6; color: #b25b1c; border-color: #ffe0c2; }
+      .cell-input.nurse-input.blue { background: #e8f1ff; color: #0b3f78; border-color: #c9dcff; }
+      .cell-input.nurse-input.teal { background: #e6f7f7; color: #0d6868; border-color: #c3eaea; }
+      .cell-input.nurse-input.gray { background: #f0f2f5; color: #414c5a; border-color: #d8dde5; }
+      .cell-input.nurse-input.pink { background: #ffeef4; color: #a43b64; border-color: #ffd5e7; }
+      .cell-input.nurse-input.navy { background: #eaf1ff; color: #0d2f6e; border-color: #cadaff; }
+      .cell-input.nurse-input.amber { background: #fff3e0; color: #9c5300; border-color: #ffe0b3; }
+      .cell-input.nurse-input.lime { background: #f1fbe5; color: #4a6b0f; border-color: #d8f0b3; }
+      .cell-input.nurse-input.coral { background: #fff0ec; color: #b34b3f; border-color: #ffd8cf; }
+      .cell-input.nurse-input.cyan { background: #e6f9ff; color: #0f5771; border-color: #c6ecfa; }
+      .table-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: #f5f8ff;
+        border: 1px solid #dbe4f3;
+      }
+      .table-summary {
+        font-size: 12px;
+        color: #10356b;
+        background: #eef4ff;
+        border: 1px solid #d8e3ff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .table-summary strong {
+        color: #0a4fb8;
+      }
+      .board-title {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--blue-deep);
+        font-weight: 800;
+      }
+      .info-note {
+        margin: 4px 0 8px;
+        padding: 8px 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(13, 123, 255, 0.08),
+          rgba(10, 79, 184, 0.04)
+        );
+        border: 1px solid #d5e3ff;
+        border-radius: 10px;
+        color: var(--text);
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      .info-note strong {
+        color: var(--blue-deep);
+      }
+      .info-note ul {
+        margin: 6px 0 0;
+        padding-left: 16px;
+      }
+      .action-btn {
+        background: linear-gradient(135deg, #00e0ff, #0ea5e9);
+        color: #0b1224;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0, 224, 255, 0.25);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      .action-btn.secondary {
+        background: #eef4ff;
+        color: #0b3f78;
+        box-shadow: none;
+        border: 1px solid #dbe4f3;
+      }
+      .action-btn.danger {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+      }
+      /* CareFusion assignment panel */
+      .cf-shell {
+        font-family: inherit;
+        background: #f5f7fb;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid #d0d8e7;
+      }
+      .cf-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .cf-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px;
+        margin: 8px 0;
+      }
+      .cf-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .cf-field label {
+        font-weight: 700;
+        font-size: 12px;
+        color: #10356b;
+      }
+      .cf-field input {
+        border: 1px solid #dee3ef;
+        border-radius: 8px;
+        padding: 8px;
+        font: inherit;
+      }
+      .cf-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #10356b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin: 0;
+      }
+      .cf-desc {
+        font-size: 12px;
+        color: #47566f;
+        margin: 0 0 10px;
+      }
+      .cf-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+      }
+      .cf-card {
+        background: #ffffff;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #dee3ef;
+        box-shadow: 0 6px 18px rgba(16, 53, 107, 0.06);
+      }
+      .cf-subtitle {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0 0 6px;
+        color: #10356b;
+      }
+      .cf-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        padding: 4px 0;
+        border-bottom: 1px solid #eef1f7;
+      }
+      .cf-row:last-child { border-bottom: none; }
+      .cf-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 6px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        background: #eef4ff;
+        color: #10356b;
+        border: 1px solid #d8e3ff;
+      }
+      .cf-chip.warn { background: #fff6e5; color: #a15a00; border-color: #f5d9a5; }
+      .cf-chip.danger { background: #ffeaea; color: #b91c1c; border-color: #f2c1c1; }
+      .cf-chip.good { background: #e9f7ef; color: #0f7a3c; border-color: #c9ebd6; }
+      .cf-btn {
+        background: linear-gradient(135deg, #1c5bbf, #10356b);
+        color: #fff;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        box-shadow: 0 12px 28px rgba(16, 53, 107, 0.16);
+      }
+      .cf-btn:hover { transform: translateY(-1px); }
+      .cf-btn.secondary {
+        background: #eef2f7;
+        color: #10356b;
+        box-shadow: none;
+        border: 1px solid #d8deeb;
+      }
+      .cf-btn[disabled] {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .cf-inline {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      /* NOVA overview */
+      .nova-section h3 {
+        margin: 0 0 8px;
+        color: #10356b;
+      }
+      .nova-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 8px;
+      }
+      .nova-card {
+        padding: 10px 12px;
+        border: 1px solid #dfe6f2;
+        border-radius: 10px;
+        background: #f7faff;
+      }
+      .nova-card h4 {
+        margin: 0 0 6px;
+        color: #0d3f8f;
+      }
+      .nova-card ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #3b4559;
+        font-size: 13px;
+      }
+      .cf-results {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+      }
+      .cf-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+        font-size: 12px;
+      }
+      .cf-table th,
+      .cf-table td {
+        border: 1px solid #dee3ef;
+        padding: 6px 8px;
+        text-align: left;
+      }
+      .cf-table th {
+        background: #eaf2ff;
+        color: #10356b;
+        font-weight: 700;
+      }
+      .cf-score {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #47566f;
+        margin-top: 6px;
+      }
+      .cf-bar {
+        width: 100%;
+        height: 6px;
+        background: #e3e8f2;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .cf-bar div {
+        height: 100%;
+        background: linear-gradient(90deg, #4f8dfd, #10356b);
+      }
+      /* Storyline card */
+      #storyline-card {
+        font-family: inherit;
+        max-width: 760px;
+        padding: 20px;
+        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid #d0d8e7;
+        box-shadow: 0 12px 28px rgba(12, 38, 94, 0.12);
+        margin: 10px auto;
+      }
+      .sl-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #10356b;
+        margin: 0 0 4px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .sl-sub {
+        font-size: 12px;
+        color: #47566f;
+        margin: 0 0 12px;
+      }
+      .sl-section {
+        margin-bottom: 12px;
+      }
+      .sl-section h3 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #10356b;
+        margin: 0 0 6px;
+      }
+      .sl-item {
+        background: #f5f7fb;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #e1e7f3;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: #10356b;
+      }
+      .sl-badge {
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        display: inline-block;
+        margin-right: 6px;
+      }
+      .sl-badge.high { background: #ffe5e5; color: #b30000; }
+      .sl-badge.medium { background: #fff5d8; color: #9a6300; }
+      .sl-badge.low { background: #e7ffe5; color: #006d34; }
+      .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 36px rgba(13, 123, 255, 0.26);
+      }
+      .row-selected td {
+        background: linear-gradient(180deg, #eef5ff 0%, #e1ecff 100%) !important;
+        box-shadow:
+          inset 0 0 0 2px rgba(13, 123, 255, 0.5),
+          inset 3px 0 0 rgba(13, 123, 255, 0.35);
+        border-color: rgba(13, 123, 255, 0.35);
+        position: relative;
+      }
+      .row-selected td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+      .row-selected td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+      .row-critical td { background: #ffecec !important; border-color: rgba(255, 158, 158, 0.6); }
+      .row-due td { background: #fff6e5 !important; border-color: rgba(255, 204, 153, 0.6); }
+      .row-soon td { background: #f4f7ff !important; border-color: rgba(186, 206, 255, 0.6); }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px;
+        width: min(720px, 90vw);
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+      }
+      .modal h3 {
+        margin: 0 0 12px;
+        color: var(--blue-deep);
+      }
+      .modal form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px 12px;
+      }
+      .modal label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .modal input,
+      .modal textarea {
+        border: 1px solid var(--cell-border);
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .modal .actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      .modal .secondary {
+        background: #eef2f7;
+        color: var(--text);
+      }
+      .legend {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .legend strong {
+        color: var(--text);
+      }
+      .status-dot {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+      .status-dot.green {
+        background: #1db954;
+      }
+      .status-dot.yellow {
+        background: #f4c542;
+      }
+      .status-dot.blue {
+        background: #2563eb;
+      }
+      .status-dot.red {
+        background: #ef4444;
+      }
+      .status-dot.gray {
+        background: #6b7280;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 6px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        color: #0b3f78;
+        background: #e2f1ff;
+        border: 1px solid #cddff7;
+      }
+      .badge.green {
+        background: #e8f7ee;
+        color: #0f7a3c;
+        border-color: #c5e6d2;
+      }
+      .badge.purple {
+        background: #f2ecff;
+        color: #5b3bb2;
+        border-color: #ded1ff;
+      }
+      .badge.orange {
+        background: #fff2e6;
+        color: #b25b1c;
+        border-color: #ffe0c2;
+      }
+      .badge.blue {
+        background: #e8f1ff;
+        color: #0b3f78;
+        border-color: #c9dcff;
+      }
+      .badge.teal {
+        background: #e6f7f7;
+        color: #0d6868;
+        border-color: #c3eaea;
+      }
+      .badge.gray {
+        background: #f0f2f5;
+        color: #414c5a;
+        border-color: #d8dde5;
+      }
+      .badge.pink {
+        background: #ffeef4;
+        color: #a43b64;
+        border-color: #ffd5e7;
+      }
+
+      /* right column boxes */
+      .box {
+        border: 1px solid var(--cell-border);
+        background: #ffffff;
+        padding: 8px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .box h3 {
+        margin: 0 0 8px;
+        color: #0b3f78;
+        font-size: 14px;
+      }
+      .box table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 11px;
+        max-height: none;
+        display: table;
+        overflow: hidden;
+      }
+      .box th,
+      .box td {
+        padding: 4px 5px;
+        border: 1px solid var(--cell-border);
+        text-align: left;
+        vertical-align: middle;
+      }
+      .box th {
+        background: #eaf2ff;
+        color: var(--blue-deep);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      .box td input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d5dce8;
+        background: #ffffff;
+        font: inherit;
+        padding: 3px 5px;
+        border-radius: 6px;
+        color: var(--text);
+      }
+      .box td input:focus {
+        border-color: var(--blue);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 123, 255, 0.15);
+      }
+      .clickable-cell {
+        cursor: pointer;
+      }
+      .clickable-cell input {
+        cursor: text;
+      }
+      .code-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      /* bottom */
+      .footer {
+        margin-top: 12px;
+        border-top: 6px solid var(--sheet-border);
+        padding-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      @media (max-width: 1100px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+        .hdr-left,
+        .hdr-right {
+          width: 140px;
+        }
+        .title {
+          font-size: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="main">
+      <section class="panel">
+        <div class="table-wrap">
+          <div class="table-actions">
+            <h2 class="board-title">NOVA Whiteboard</h2>
+            <div style="display: flex; gap: 6px; align-items:center;">
+              <button class="action-btn" id="completeRound">
+                Complete round
+              </button>
+              <button class="action-btn danger" id="markDischarge">
+                Mark empty room
+              </button>
+              <button class="action-btn secondary" id="togglePrivacy">
+                Privacy mode
+              </button>
+              <button class="action-btn" id="openEditor">Edit selected</button>
+              <div class="dropdown" style="position: relative;">
+                <button class="action-btn secondary" id="moreActions">More ▾</button>
+                <div id="moreMenu" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #dbe4f3; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); min-width:180px; z-index:10;">
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none;" id="showAssignmentInfo">CareFusion Assignment</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showStoryline">Storyline Card</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showNovaOverview">NOVA Overview</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showNovaMetrics">NOVA Quality</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showOnTime">On-time Rounds</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="table-summary" id="tableSummary">
+            <span><strong>Due:</strong> 0</span>
+            <span><strong>Critical:</strong> 0</span>
+            <span><strong>Avg need:</strong> 0</span>
+            <span><strong>Staffing strain:</strong> Balanced</span>
+          </div>
+          <table class="bed-table" aria-label="Bed assignments">
+            <thead>
+              <tr>
+                <th class="status">Status</th>
+                <th class="room">Room</th>
+                <th class="round">Rounding</th>
+                <th class="nurse">Nurse</th>
+                <th class="cna">CNA</th>
+                <th class="time">Time Out</th>
+                <th class="patient">Patient</th>
+                <th class="physician">Physician</th>
+                <th class="sp">Special Considerations</th>
+                <th>Iso</th>
+                <th>Needs</th>
+                <th>Risk</th>
+                <th>Therapy</th>
+                <th>Assist</th>
+                <th>Fall</th>
+                <th>Diet</th>
+              </tr>
+            </thead>
+            <tbody id="bedBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- right column -->
+      <aside class="panel">
+        <div class="box census" style="flex:1;">
+          <h3>Appointments <span id="apptCount"></span></h3>
+          <div style="overflow-y:auto; max-height:100%;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Room</th>
+                  <th>Time</th>
+                  <th>Pickup</th>
+                </tr>
+              </thead>
+              <tbody id="apptBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top: 8px; flex:1;">
+          <h3>Code Team <span id="codeCount"></span></h3>
+          <div style="overflow-y:auto; max-height:100%;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Assigned</th>
+                </tr>
+              </thead>
+              <tbody id="codeBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top: 8px; flex:1;">
+          <h3>Showers Schedule <span id="showerCount"></span></h3>
+          <div style="overflow-y:auto; max-height:100%;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Room</th>
+                  <th>Time</th>
+                  <th>Pickup</th>
+                </tr>
+              </thead>
+              <tbody id="showerBody"></tbody>
+            </table>
+          </div>
+        </div>
+        </aside>
+      </main>
+    <datalist id="isoList">
+      <option value="🟦 Contact"></option>
+      <option value="🟥 Droplet"></option>
+      <option value="🟪 Airborne"></option>
+      <option value="🟫 Enhanced"></option>
+      <option value="🟩 None"></option>
+      <option value="🅲 C Diff"></option>
+    </datalist>
+    <datalist id="nList">
+      <option value="❄️ Cooling"></option>
+      <option value="💧 IV Fluids"></option>
+      <option value="🔔 Alarm"></option>
+      <option value="🧊 Ice"></option>
+      <option value="⭐ VIP"></option>
+      <option value="🧩 Psych"></option>
+    </datalist>
+    <datalist id="tList">
+      <option value="❤️ Cardiac"></option>
+      <option value="🏃 Mobility"></option>
+      <option value="💊 Meds"></option>
+      <option value="🧘 Rehab"></option>
+      <option value="🛏️ BRP"></option>
+      <option value="🧠 Neuro"></option>
+    </datalist>
+    <datalist id="assistList">
+      <option value="🤝 Standby"></option>
+      <option value="🧑‍🦽 Wheelchair"></option>
+      <option value="🛏️ Bed rest"></option>
+      <option value="🪜 Walker"></option>
+      <option value="🧑‍⚕️ Lift team"></option>
+      <option value="🪑 Sit assist"></option>
+    </datalist>
+    <datalist id="riskList">
+      <option value="High fall risk"></option>
+      <option value="Moderate fall risk"></option>
+      <option value="Low fall risk"></option>
+      <option value="Pain watch"></option>
+      <option value="Confused/redirect"></option>
+      <option value="Elopement risk"></option>
+    </datalist>
+    <datalist id="fallList">
+      <option value="⭐ Low"></option>
+      <option value="⚠️ Moderate"></option>
+      <option value="🛑 High"></option>
+      <option value="✨ Monitor"></option>
+      <option value="🔔 Bed alarm"></option>
+    </datalist>
+    <script>
+      (() => {
+        const bedBody = document.getElementById("bedBody");
+        const apptBody = document.getElementById("apptBody");
+        const showerBody = document.getElementById("showerBody");
+        const openEditorBtn = document.getElementById("openEditor");
+        const togglePrivacyBtn = document.getElementById("togglePrivacy");
+        const dischargeBtn = document.getElementById("markDischarge");
+        const completeRoundBtn = document.getElementById("completeRound");
+        const assignmentInfoBtn = document.getElementById("showAssignmentInfo");
+        const storylineBtn = document.getElementById("showStoryline");
+        const novaOverviewBtn = document.getElementById("showNovaOverview");
+        const novaMetricsBtn = document.getElementById("showNovaMetrics");
+        const onTimeBtn = document.getElementById("showOnTime");
+        const moreActionsBtn = document.getElementById("moreActions");
+        const moreMenu = document.getElementById("moreMenu");
+        const tableSummary = document.getElementById("tableSummary");
+        const carefusionData = {
+          staff: [],
+          patients: [],
+          assignments: [],
+          shiftInputs: {
+            day: { rn: "", tech: "", support: "" },
+            night: { rn: "", tech: "", support: "" },
+          },
+          currentShift: "day",
+        };
+        const listIdByField = {
+          iso: "isoList",
+          n: "nList",
+          r: "riskList",
+          t: "tList",
+          assist: "assistList",
+          fall: "fallList",
+        };
+
+        const palette = [
+          "green",
+          "purple",
+          "orange",
+          "blue",
+          "teal",
+          "gray",
+          "pink",
+          "navy",
+          "amber",
+          "lime",
+          "coral",
+          "cyan",
+        ];
+        const nurseColors = new Map();
+
+        const initialRows = [
+          {
+            status: "green",
+            room: 201,
+            nurse: "Evan",
+            cna: "Marsha",
+            time: "5:01 P",
+            roundedAgo: 15,
+            lastRoundedAt: Date.now() - 15 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 15 * 60000],
+            patient: "Gwen Marra",
+            physician: "Arnold, P",
+            sp: "Gift",
+            iso: "W",
+            n: "",
+            r: "R",
+            t: "<3",
+            assist: "Assist",
+            fall: "*",
+            diet: "Adv as Tol",
+          },
+          {
+            status: "green",
+            room: 202,
+            nurse: "Marsha",
+            cna: "Evan",
+            time: "5:15 P",
+            roundedAgo: 45,
+            lastRoundedAt: Date.now() - 45 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 45 * 60000],
+            patient: "George Washburn",
+            physician: "Arnold, P",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "R",
+            t: "<3",
+            assist: "Assist",
+            fall: "*",
+            diet: "Regular",
+          },
+          {
+            status: "yellow",
+            room: 203,
+            nurse: "Pat",
+            cna: "Evan",
+            time: "4:14 P",
+            roundedAgo: 70,
+            lastRoundedAt: Date.now() - 70 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 70 * 60000],
+            patient: "Thomas Jeffreys",
+            physician: "Carr, W",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "R",
+            t: "<3",
+            assist: "Team lift",
+            fall: "*",
+            diet: "Mech soft",
+          },
+          {
+            status: "blue",
+            room: 204,
+            nurse: "Stacia",
+            cna: "Pat",
+            time: "3:13 P",
+            roundedAgo: 90,
+            lastRoundedAt: Date.now() - 90 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 90 * 60000],
+            patient: "Antonio Mora",
+            physician: "Smith, R",
+            sp: "Ribbon",
+            iso: "W",
+            n: "",
+            r: "R",
+            t: "<3",
+            assist: "Wheel",
+            fall: "*",
+            diet: "Cardiac",
+          },
+          {
+            status: "green",
+            room: 205,
+            nurse: "Evan",
+            cna: "Randy Rockwell",
+            time: "4:44 P",
+            roundedAgo: 25,
+            lastRoundedAt: Date.now() - 25 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 25 * 60000],
+            patient: "Randy Rockwell",
+            physician: "Carr, W",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "",
+            t: "",
+            assist: "Assist",
+            fall: "*",
+            diet: "Clear",
+          },
+          {
+            status: "yellow",
+            room: 206,
+            nurse: "Jennifer",
+            cna: "Andrew",
+            time: "4:20 P",
+            roundedAgo: 62,
+            lastRoundedAt: Date.now() - 62 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 62 * 60000],
+            patient: "Donald Naimoli",
+            physician: "Patel, K",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "R",
+            t: "Up",
+            assist: "Assist",
+            fall: "*",
+            diet: "Regular",
+          },
+          {
+            status: "green",
+            room: 207,
+            nurse: "Lizbet",
+            cna: "Mark",
+            time: "4:12 P",
+            roundedAgo: 40,
+            lastRoundedAt: Date.now() - 40 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 40 * 60000],
+            patient: "Julene Dekkers",
+            physician: "Smith, R",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "R",
+            t: "<3",
+            assist: "Wheel",
+            fall: "*",
+            diet: "Dysph 3",
+          },
+          {
+            status: "green",
+            room: 208,
+            nurse: "Laura",
+            cna: "Erin",
+            time: "4:59 P",
+            roundedAgo: 55,
+            lastRoundedAt: Date.now() - 55 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 55 * 60000],
+            patient: "John Olthoff",
+            physician: "Carr, W",
+            sp: "Gift",
+            iso: "",
+            n: "",
+            r: "<3",
+            t: "",
+            assist: "Assist",
+            fall: "*",
+            diet: "Cardiac",
+          },
+          {
+            status: "red",
+            room: 209,
+            nurse: "Jenny",
+            cna: "Andrew",
+            time: "3:18 P",
+            roundedAgo: 80,
+            lastRoundedAt: Date.now() - 80 * 60000,
+            roundInterval: 60,
+            roundingHistory: [Date.now() - 80 * 60000],
+            patient: "Karen Schuiteman",
+            physician: "Patel, K",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "<3",
+            t: "",
+            assist: "Wheel",
+            fall: "*",
+            diet: "NPO",
+          },
+        ];
+
+        const rooms = [
+          ...initialRows,
+          ...Array.from({ length: 14 }, (_, i) => ({
+            status: "",
+            room: 210 + i,
+            nurse: "",
+            cna: "",
+            time: "",
+            roundedAgo: 0,
+            roundInterval: 60,
+            roundingHistory: [],
+            patient: "",
+            physician: "",
+            sp: "",
+            iso: "",
+            n: "",
+            r: "",
+            t: "",
+            assist: "",
+            fall: "",
+            diet: "",
+            lastRoundedAt: Date.now(),
+          })),
+        ];
+        let selectedRoom = rooms[0]?.room || null;
+        let selectionTimer = null;
+        let privacyMasked = true;
+
+        const appointments = Array.from({ length: 6 }, () => ({
+          room: "",
+          time: "",
+          pickup: "",
+        }));
+        const showers = Array.from({ length: 6 }, () => ({
+          room: "",
+          time: "",
+          pickup: "",
+        }));
+        const codeTeam = [
+          { role: "Supervisor", assigned: "" },
+          { role: "Meds", assigned: "" },
+          { role: "Records", assigned: "" },
+          { role: "CPR", assigned: "" },
+          { role: "Respiratory", assigned: "" },
+          { role: "Doctor", assigned: "" },
+        ];
+
+        const setBadgeColors = () => {
+          nurseColors.clear();
+          let colorIndex = 0;
+          rooms.forEach((row) => {
+            if (!row.nurse) return;
+            if (!nurseColors.has(row.nurse)) {
+              nurseColors.set(row.nurse, palette[colorIndex % palette.length]);
+              colorIndex += 1;
+            }
+          });
+        };
+
+        const riskWeights = { high: 30, medium: 15, low: 5 };
+
+        // Maintain rounding history per room (last 24h)
+        const trimHistory = (history = []) => {
+          const cutoff = Date.now() - 24 * 60 * 60000;
+          return history.filter((ts) => ts >= cutoff);
+        };
+
+        const inferRisk = (row) => {
+          const riskText = (row.r || "").toLowerCase();
+          if (riskText.includes("high") || row.status === "red") return "high";
+          if (riskText.includes("med") || row.status === "yellow") return "medium";
+          return "low";
+        };
+
+        const parseNames = (text) =>
+          text
+            .split(/[,\\n]/)
+            .map((s) => s.trim())
+            .filter(Boolean);
+
+        // NOVA engine: unit-level intelligence
+        const NOVA_ENGINE = {
+          computeNeedScore(row) {
+            let score = 0;
+            const interval = row.roundInterval || 60;
+            const drift = row.roundDrift || (row.roundedAgo || 0) / interval;
+            score += Math.min(60, drift * 40);
+
+            const fall = row.fall || "";
+            if (fall.includes("🛑")) score += 30;
+            else if (fall.includes("⚠️")) score += 18;
+
+            const assist = (row.assist || "").toLowerCase();
+            if (assist.includes("lift")) score += 20;
+            else if (assist.includes("wheel")) score += 12;
+            else if (assist.includes("assist")) score += 8;
+
+            const iso = row.iso || "";
+            if (iso && !iso.includes("None") && !iso.includes("🟩")) score += 8;
+
+            const notes = (row.n || row.notes || "").toLowerCase();
+            if (notes.includes("pain")) score += 15;
+            if (notes.includes("confused") || notes.includes("agitated")) score += 15;
+            if (notes.includes("anxious") || notes.includes("distress")) score += 10;
+
+            return Math.max(0, Math.min(100, Math.round(score)));
+          },
+
+          computeStabilityScore(row) {
+            const need = row.novaNeedScore ?? this.computeNeedScore(row);
+            return Math.max(0, Math.min(100, 100 - need));
+          },
+
+          classifyRoundState(row) {
+            const interval = row.roundInterval || 60;
+            const drift = row.roundDrift || (row.roundedAgo || 0) / interval;
+            if (drift >= 1.5) return "critical";
+            if (drift >= 1.15) return "due";
+            if (drift >= 0.9) return "soon";
+            return "ok";
+          },
+
+          updateRow(row) {
+            row.roundState = this.classifyRoundState(row);
+            row.novaNeedScore = this.computeNeedScore(row);
+            row.novaStabilityScore = this.computeStabilityScore(row);
+            // On-time percent for last 24h
+            const interval = row.roundInterval || 60;
+            const hist = trimHistory(row.roundingHistory || []);
+            const expected = interval > 0 ? Math.max(1, Math.round((24 * 60) / interval)) : 1;
+            const actual = hist.length;
+            row.novaOnTimePct = Math.min(100, Math.round((actual / expected) * 100));
+            row.roundingHistory = hist;
+          },
+
+          updateAll(rooms) {
+            rooms.forEach((row) => this.updateRow(row));
+          },
+
+          computeUnitMetrics(rooms) {
+            const activeRooms = rooms.filter((r) => r.patient);
+            if (!activeRooms.length) {
+              return {
+                avgNeed: 0,
+                avgStability: 0,
+                statusCounts: { ok: 0, soon: 0, due: 0, critical: 0 },
+                staffingStrain: 1,
+                busiest: null,
+              };
+            }
+
+            let totalNeed = 0;
+            let totalStability = 0;
+            const statusCounts = { ok: 0, soon: 0, due: 0, critical: 0 };
+            const nurseLoad = new Map();
+
+            activeRooms.forEach((row) => {
+              const need = row.novaNeedScore ?? this.computeNeedScore(row);
+              const stability = row.novaStabilityScore ?? this.computeStabilityScore(row);
+              const state = this.classifyRoundState(row);
+
+              statusCounts[state] = (statusCounts[state] || 0) + 1;
+              totalNeed += need;
+              totalStability += stability;
+
+              if (row.nurse) {
+                const prev = nurseLoad.get(row.nurse) || { patients: 0, load: 0 };
+                prev.patients += 1;
+                prev.load += need;
+                nurseLoad.set(row.nurse, prev);
+              }
+            });
+
+            const avgNeed = totalNeed / activeRooms.length;
+            const avgStability = totalStability / activeRooms.length;
+
+            let maxLoad = 0;
+            let busiest = null;
+            nurseLoad.forEach((v, name) => {
+              if (v.load > maxLoad) {
+                maxLoad = v.load;
+                busiest = { name, ...v };
+              }
+            });
+
+            const avgLoad = nurseLoad.size > 0 ? totalNeed / nurseLoad.size : totalNeed || 1;
+            const staffingStrain = avgLoad ? maxLoad / avgLoad : 1;
+
+            return {
+              avgNeed,
+              avgStability,
+              statusCounts,
+              staffingStrain,
+              busiest,
+            };
+          },
+        };
+
+        const prepareCarefusionData = () => {
+          const staffMap = new Map();
+          const shiftKey = carefusionData.currentShift || "day";
+          const shift = carefusionData.shiftInputs[shiftKey];
+          if (shift) {
+            parseNames(shift.rn).forEach((name, idx) => {
+              staffMap.set(`rn-${name}-${idx}`, {
+                id: `rn-${name}-${idx}`,
+                name,
+                role: "RN",
+                fatigue: 0.2,
+                available: true,
+                proximity: 5,
+              });
+            });
+            parseNames(shift.tech).forEach((name, idx) => {
+              staffMap.set(`tech-${name}-${idx}`, {
+                id: `tech-${name}-${idx}`,
+                name,
+                role: "Tech",
+                fatigue: 0.2,
+                available: true,
+                proximity: 7,
+              });
+            });
+            parseNames(shift.support).forEach((name, idx) => {
+              staffMap.set(`sup-${name}-${idx}`, {
+                id: `sup-${name}-${idx}`,
+                name,
+                role: "Support",
+                fatigue: 0.2,
+                available: true,
+                proximity: 8,
+              });
+            });
+          }
+          rooms.forEach((row) => {
+            if (row.nurse) {
+              staffMap.set(row.nurse, {
+                id: `n-${row.nurse}`,
+                name: row.nurse,
+                role: "RN",
+                fatigue: 0.3,
+                available: row.status !== "red",
+                proximity: Math.abs((row.room || 0) % 10) + 2,
+              });
+            }
+            if (row.cna) {
+              staffMap.set(`cna-${row.cna}`, {
+                id: `c-${row.cna}`,
+                name: row.cna,
+                role: "Tech",
+                fatigue: 0.3,
+                available: true,
+                proximity: Math.abs((row.room || 0) % 10) + 4,
+              });
+            }
+          });
+
+          const patients = rooms
+            .filter((row) => row.patient)
+            .map((row) => ({
+              id: `p-${row.room}`,
+              name: row.patient,
+              risk: inferRisk(row),
+              requiredRole: "RN",
+              room: row.room,
+            }));
+
+          carefusionData.staff = Array.from(staffMap.values());
+          carefusionData.patients = patients;
+        };
+
+        const computeAssignmentScore = (staffMember, patient) => {
+          let score = 0;
+          if (!staffMember.available) return -Infinity;
+          score += 30;
+          score += (1 - (staffMember.fatigue || 0)) * 20;
+          score += Math.max(0, 20 - (staffMember.proximity || 0));
+          score += staffMember.role === patient.requiredRole ? 30 : 10;
+          score += riskWeights[patient.risk] || 0;
+          return score;
+        };
+
+        const runCarefusionAssignment = () => {
+          prepareCarefusionData();
+          const results = carefusionData.patients.map((patient) => {
+            let best = null;
+            let bestScore = -Infinity;
+            carefusionData.staff.forEach((member) => {
+              const s = computeAssignmentScore(member, patient);
+              if (s > bestScore) {
+                bestScore = s;
+                best = member;
+              }
+            });
+            return {
+              patient: patient.name,
+              staff: best ? best.name : "No available staff",
+              risk: patient.risk,
+              score: bestScore,
+              room: patient.room,
+              role: best ? best.role : "",
+            };
+          });
+          carefusionData.assignments = results;
+          renderCarefusion();
+        };
+
+        const renderCarefusion = () => {
+          const app = assignmentBackdrop.querySelector("#carefusion-app");
+          if (!app) return;
+          const riskRank = { high: 3, medium: 2, low: 1 };
+          const staffList = carefusionData.staff
+            .map(
+              (s) => `
+              <div class="cf-row">
+                <span>${s.name} (${s.role})</span>
+                <span>
+                  <span class="cf-chip ${s.available ? "good" : "danger"}">${s.available ? "Available" : "Busy"}</span>
+                  <span class="cf-chip ${s.fatigue > 0.6 ? "danger" : s.fatigue > 0.3 ? "warn" : "good"}">Fatigue ${Math.round(s.fatigue * 100)}%</span>
+                </span>
+              </div>`
+            )
+            .join("");
+
+          const staffOptions = carefusionData.staff
+            .map(
+              (s) => `<option value="${s.name}" data-role="${s.role}">${s.name} (${s.role})</option>`
+            )
+            .join("");
+
+          const patientRows = carefusionData.assignments
+            .slice()
+            .sort((a, b) => (riskRank[b.risk] || 0) - (riskRank[a.risk] || 0))
+            .map(
+              (a) => `
+              <tr>
+                <td>${a.patient}</td>
+                <td>${a.risk || "—"}</td>
+                <td>${a.staff}</td>
+                <td>${a.role || ""}</td>
+                <td>${a.score === -Infinity ? "N/A" : a.score.toFixed(1)}</td>
+              </tr>`
+            )
+            .join("");
+
+          const hasAssignments = carefusionData.assignments.length > 0;
+
+          app.innerHTML = `
+            <div class="cf-shell">
+              <div class="cf-head">
+                <h3 class="cf-title">CareFusion™ Assignment</h3>
+                <div style="display:flex; gap:6px;">
+                  <button class="cf-btn" id="cf-run">Run engine</button>
+                  <button class="cf-btn" id="cf-apply" ${hasAssignments ? "" : "disabled"}>Apply to board</button>
+                </div>
+              </div>
+              <p class="cf-desc">Shift-aware auto-assignment: availability, fatigue, proximity, skills, and risk.</p>
+
+              <div class="cf-controls">
+                <div class="cf-field">
+                  <label>Shift</label>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="cf-btn" id="cf-shift-day" style="padding:6px 10px; font-size:12px;">Day</button>
+                    <button type="button" class="cf-btn secondary" id="cf-shift-night" style="padding:6px 10px; font-size:12px;">Night</button>
+                  </div>
+                </div>
+                <div class="cf-field">
+                  <label>${carefusionData.currentShift === "day" ? "Day" : "Night"} RN (comma separated)</label>
+                  <input id="cf-rn" placeholder="e.g., Alex, Taylor" />
+                </div>
+                <div class="cf-field">
+                  <label>${carefusionData.currentShift === "day" ? "Day" : "Night"} Tech</label>
+                  <input id="cf-tech" placeholder="e.g., Jamie" />
+                </div>
+                <div class="cf-field">
+                  <label>${carefusionData.currentShift === "day" ? "Day" : "Night"} Support</label>
+                  <input id="cf-support" placeholder="e.g., Morgan" />
+                </div>
+              </div>
+
+              <div class="cf-card">
+                <div class="cf-subtitle">Staff (auto + shift)</div>
+                ${staffList || "<div class='cf-desc'>Add staff names to begin.</div>"}
+              </div>
+
+              <div class="cf-card">
+                <div class="cf-subtitle">Bundle assignment</div>
+                <div class="cf-field">
+                  <label>Select staff</label>
+                  <select id="cf-bundle-staff" class="cell-input">
+                    <option value="">Choose…</option>
+                    ${staffOptions}
+                  </select>
+                </div>
+                <div class="cf-field">
+                  <label>Rooms (comma separated)</label>
+                  <input id="cf-bundle-rooms" placeholder="e.g., 201,202,203" />
+                </div>
+                <div class="cf-inline" style="margin-top:6px;">
+                  <label style="font-weight:700; font-size:12px; color:#10356b;">
+                    <input type="checkbox" id="cf-bundle-acuity" /> Fill highest acuity first
+                  </label>
+                  <button class="cf-btn secondary" id="cf-apply-bundle">Assign bundle</button>
+                </div>
+                <div class="cf-desc">Uses role to place into Nurse/Tech/Support fields; skips filled slots.</div>
+              </div>
+
+              <div class="cf-subtitle" style="margin-top:6px;">Assignments</div>
+              <div class="cf-results">
+                ${hasAssignments ? "" : '<div class="cf-desc">Run the engine to see best matches.</div>'}
+                ${hasAssignments ? `
+                  <table class="cf-table">
+                    <thead>
+                      <tr>
+                        <th>Patient</th>
+                        <th>Risk</th>
+                        <th>Assigned staff</th>
+                        <th>Role</th>
+                        <th>Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>${patientRows}</tbody>
+                  </table>` : ""}
+              </div>
+            </div>
+          `;
+          const runBtn = app.querySelector("#cf-run");
+          if (runBtn) runBtn.addEventListener("click", runCarefusionAssignment);
+          const applyBtn = app.querySelector("#cf-apply");
+          if (applyBtn) applyBtn.addEventListener("click", applyAssignmentsToBoard);
+          const shiftDay = app.querySelector("#cf-shift-day");
+          const shiftNight = app.querySelector("#cf-shift-night");
+          const setShiftStyles = () => {
+            if (shiftDay && shiftNight) {
+              const dayActive = carefusionData.currentShift === "day";
+              shiftDay.style.background = dayActive ? "linear-gradient(135deg, #1c5bbf, #10356b)" : "#eef2f7";
+              shiftDay.style.color = dayActive ? "#fff" : "#10356b";
+              shiftDay.style.boxShadow = dayActive ? "0 12px 28px rgba(16,53,107,0.16)" : "none";
+              shiftDay.style.border = dayActive ? "none" : "1px solid #d8deeb";
+              shiftNight.style.background = dayActive ? "#eef2f7" : "linear-gradient(135deg, #1c5bbf, #10356b)";
+              shiftNight.style.color = dayActive ? "#10356b" : "#fff";
+              shiftNight.style.boxShadow = dayActive ? "none" : "0 12px 28px rgba(16,53,107,0.16)";
+              shiftNight.style.border = dayActive ? "1px solid #d8deeb" : "none";
+            }
+          };
+          const bindShift = (key) => {
+            carefusionData.currentShift = key;
+            setShiftStyles();
+            syncInputs();
+            runCarefusionAssignment();
+          };
+          const syncInputs = () => {
+            const shift = carefusionData.shiftInputs[carefusionData.currentShift];
+            const setVal = (id, val) => {
+              const el = app.querySelector(id);
+              if (el) el.value = val || "";
+            };
+            setVal("#cf-rn", shift.rn);
+            setVal("#cf-tech", shift.tech);
+            setVal("#cf-support", shift.support);
+          };
+          syncInputs();
+          if (shiftDay) shiftDay.addEventListener("click", () => bindShift("day"));
+          if (shiftNight) shiftNight.addEventListener("click", () => bindShift("night"));
+          const bindInput = (selector, targetKey) => {
+            const el = app.querySelector(selector);
+            if (el) {
+              el.addEventListener("input", () => {
+                carefusionData.shiftInputs[carefusionData.currentShift][targetKey] = el.value;
+              });
+            }
+          };
+          bindInput("#cf-rn", "rn");
+          bindInput("#cf-tech", "tech");
+          bindInput("#cf-support", "support");
+          setShiftStyles();
+          const bundleBtn = app.querySelector("#cf-apply-bundle");
+          if (bundleBtn) {
+            bundleBtn.addEventListener("click", () => {
+              const staffSel = app.querySelector("#cf-bundle-staff");
+              const roomsInput = app.querySelector("#cf-bundle-rooms");
+              const acuityFirst = app.querySelector("#cf-bundle-acuity")?.checked;
+              const staffName = staffSel?.value?.trim();
+              const staffRole = staffSel?.selectedOptions?.[0]?.dataset?.role || "";
+              if (!staffName || !roomsInput) return;
+              const roomList = roomsInput.value
+                .split(",")
+                .map((r) => Number(r.trim()))
+                .filter((n) => !Number.isNaN(n));
+              const sortedRooms = acuityFirst
+                ? roomList
+                    .map((room) => {
+                      const row = rooms.find((r) => r.room === room);
+                      const risk = row ? inferRisk(row) : "low";
+                      return { room, risk };
+                    })
+                    .sort((a, b) => (riskRank[b.risk] || 0) - (riskRank[a.risk] || 0))
+                    .map((r) => r.room)
+                : roomList;
+              sortedRooms.forEach((roomNum) => {
+                const row = rooms.find((r) => r.room === roomNum);
+                if (!row) return;
+                if (staffRole === "RN" && !row.nurse) {
+                  row.nurse = staffName;
+                } else if (staffRole === "Tech" && !row.cna) {
+                  row.cna = staffName;
+                } else if (staffRole === "Support" && !row.sp) {
+                  row.sp = staffName;
+                }
+              });
+              renderTable();
+              runCarefusionAssignment();
+            });
+          }
+        };
+
+        const buildRoundingCell = (row) => {
+          const td = document.createElement("td");
+          td.className = "round";
+
+          const container = document.createElement("div");
+          container.className = "rounding-cell";
+
+          // Smart interval logic
+          let interval = Number(row.roundInterval);
+          if (!interval || interval <= 0) {
+            const riskText = ((row.r || "") + " " + (row.fall || "")).toLowerCase();
+            if (riskText.includes("high") || row.status === "red") interval = 60;
+            else if (riskText.includes("mod") || row.status === "yellow") interval = 90;
+            else interval = 120;
+            row.roundInterval = interval;
+          }
+
+        const now = Date.now();
+        const agoFromStamp = row.lastRoundedAt ? Math.max(0, Math.round((now - row.lastRoundedAt) / 60000)) : 0;
+        const ago = Math.max(0, Number.isFinite(agoFromStamp) ? agoFromStamp : Number(row.roundedAgo) || 0);
+        row.roundedAgo = ago;
+        row.roundingHistory = trimHistory(row.roundingHistory || []);
+
+        const ratio = interval > 0 ? ago / interval : 0;
+
+          let state = "ok";
+          if (ratio >= 1.5) state = "critical";
+          else if (ratio >= 1.15) state = "due";
+          else if (ratio >= 0.9) state = "soon";
+
+          row.roundState = state;
+          row.roundDrift = ratio;
+
+          const label = ago === 0 ? "Now" : ago >= 60 ? `${Math.round(ago / 60)}h` : `${ago}m`;
+          let badgeText;
+          if (state === "ok" && ratio < 0.5) badgeText = "Fresh";
+          else if (state === "ok") badgeText = "On track";
+          else if (state === "soon") badgeText = "Due soon";
+          else if (state === "due") {
+            const overdueMin = Math.max(0, ago - interval);
+            badgeText = overdueMin > 0 ? `Overdue • +${overdueMin}m` : "Due now";
+          } else {
+            const overdueMin = Math.max(0, ago - interval);
+            badgeText = `LATE • +${overdueMin}m`;
+          }
+
+          const badge = document.createElement("div");
+          badge.className = "round-badge" + (state !== "ok" ? ` ${state}` : "");
+          const dot = document.createElement("span");
+          dot.className = "round-dot";
+          badge.appendChild(dot);
+          const badgeLabel = document.createElement("span");
+          badgeLabel.textContent = `${badgeText} • ${label}`;
+          badge.appendChild(badgeLabel);
+
+          const progress = document.createElement("div");
+          progress.className = "round-progress" + (state !== "ok" ? ` ${state}` : "");
+          const fill = document.createElement("div");
+          const visualRatio = Math.min(ratio, 1.2);
+          fill.style.width = `${Math.min(visualRatio, 1) * 100}%`;
+          progress.appendChild(fill);
+
+          const meta = document.createElement("div");
+          meta.className = "round-meta";
+          meta.textContent = `${interval}m window · drift ${(ratio * 100).toFixed(0)}%`;
+
+          container.appendChild(badge);
+          container.appendChild(progress);
+          container.appendChild(meta);
+          td.appendChild(container);
+          return td;
+        };
+
+        // Render NOVA quality panel
+        const renderNovaQualityBox = () => {
+          const target = document.getElementById("novaQualityBody");
+          if (!target) return;
+
+          NOVA_ENGINE.updateAll(rooms);
+          const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
+
+          const { ok, soon, due, critical } = metrics.statusCounts;
+          const activeCount = rooms.filter((r) => r.patient).length || 0;
+
+          const strainLabel =
+            metrics.staffingStrain >= 1.4
+              ? "High"
+              : metrics.staffingStrain >= 1.15
+              ? "Moderate"
+              : "Balanced";
+
+          const busiest = metrics.busiest;
+
+          const statusLine = activeCount
+            ? `OK: ${ok} · Soon: ${soon} · Due: ${due} · Critical: ${critical}`
+            : "No active patients.";
+
+          const busiestHtml = busiest
+            ? `<div>Heaviest load: <strong>${busiest.name}</strong> — ${busiest.patients} pts · load ${Math.round(
+                busiest.load
+              )}</div>`
+            : "<div>Heaviest load: <strong>N/A</strong></div>";
+
+          target.innerHTML = `
+            <div><strong>Unit pressure (need):</strong> ${metrics.avgNeed.toFixed(
+              1
+            )} / 100</div>
+            <div><strong>Patient stability (avg):</strong> ${metrics.avgStability.toFixed(
+              1
+            )} / 100</div>
+            <div style="margin-top:4px;">${statusLine}</div>
+            <div style="margin-top:4px;">
+              <strong>Staffing strain:</strong> ${strainLabel} (ratio ${metrics.staffingStrain
+                .toFixed(2)
+                .toString()})
+            </div>
+            ${busiestHtml}
+            <div style="margin-top:6px; font-size:11px; color:#6b7a93;">
+              Care Quality Ledger™ snapshot: % on-time rounds = ${
+                activeCount ? Math.round((ok / activeCount) * 100) : 0
+              }%. High-drift rooms = ${critical + due}.
+            </div>
+          `;
+        };
+
+        // Dynamically scale board to fit viewport and rows
+        const autoScaleBoard = () => {
+          const visibleRows = rooms.length;
+          const approxRowHeight = 24; // slightly conservative to keep all rows in view
+          const headerHeight = 120; // toolbar + summary + margins
+          const sidebarHeight = 80; // padding allowance
+          const targetHeight = visibleRows * approxRowHeight + headerHeight + sidebarHeight;
+          const viewport = window.innerHeight || 800;
+          const scale = Math.min(1, viewport / targetHeight);
+          const scaled = scale.toFixed(3);
+          document.documentElement.style.setProperty("--board-scale", scaled);
+          const main = document.querySelector(".main");
+          if (main) {
+            main.style.height = "calc(100vh - 8px)";
+            main.style.minHeight = main.style.height;
+          }
+        };
+
+        const renderTable = () => {
+          setBadgeColors();
+          NOVA_ENGINE.updateAll(rooms);
+          bedBody.innerHTML = "";
+          const fragment = document.createDocumentFragment();
+          rooms.forEach((row) => {
+            const tr = document.createElement("tr");
+            tr.dataset.room = row.room;
+            if (selectedRoom === row.room) tr.classList.add("row-selected");
+            if (row.roundState === "critical") tr.classList.add("row-critical");
+            else if (row.roundState === "due") tr.classList.add("row-due");
+            else if (row.roundState === "soon") tr.classList.add("row-soon");
+
+            const statusCell = document.createElement("td");
+            statusCell.className = "status";
+            const dot = document.createElement("span");
+            dot.className = `status-dot ${row.status || "gray"}`;
+            statusCell.appendChild(dot);
+
+        const focusableFields = new Set(["iso", "n", "r", "t", "assist"]);
+        const makeCell = (value, field, isNurse = false) => {
+          const td = document.createElement("td");
+          if (field === "room") {
+            td.className = "room";
+            td.textContent = row.room;
+            return td;
+              }
+              const input = document.createElement("input");
+              input.className = "cell-input" + (isNurse ? " nurse-input" : "");
+              if (field === "patient" && privacyMasked) {
+                input.value = value ? "Protected" : "";
+                input.readOnly = true;
+                td.classList.add("patient");
+              } else {
+                input.value = value || "";
+              }
+              if (listIdByField[field]) {
+                input.setAttribute("list", listIdByField[field]);
+              }
+              input.dataset.field = field;
+              if (field === "room") input.disabled = true;
+              if (field === "nurse") {
+                const color = nurseColors.get(row.nurse) || "blue";
+                input.classList.add(color);
+              }
+              if (field === "cna") td.classList.add("cna");
+              if (field === "time") td.classList.add("time");
+          if (field === "patient") td.classList.add("patient");
+          if (field === "physician") td.classList.add("physician");
+          if (field === "sp") td.classList.add("sp");
+          if (focusableFields.has(field)) td.classList.add("clickable-cell");
+          if (focusableFields.has(field)) {
+            td.addEventListener("click", () => input.focus());
+          }
+          td.appendChild(input);
+          return td;
+        };
+
+          const cells = [
+            statusCell,
+            makeCell(row.room, "room"),
+            buildRoundingCell(row),
+            makeCell(row.nurse, "nurse", true),
+              makeCell(row.cna, "cna"),
+              makeCell(row.time, "time"),
+              makeCell(row.patient, "patient"),
+              makeCell(row.physician, "physician"),
+              makeCell(row.sp, "sp"),
+              makeCell(row.iso, "iso"),
+              makeCell(row.n, "n"),
+              makeCell(row.r, "r"),
+              makeCell(row.t, "t"),
+            makeCell(row.assist, "assist"),
+            makeCell(row.fall, "fall"),
+            makeCell(row.diet, "diet"),
+          ];
+
+          cells.forEach((td) => tr.appendChild(td));
+          fragment.appendChild(tr);
+        });
+          bedBody.appendChild(fragment);
+          renderNovaQualityBox();
+          // Update summary
+          if (tableSummary) {
+            const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
+            const strainLabel =
+              metrics.staffingStrain >= 1.4
+                ? "High"
+                : metrics.staffingStrain >= 1.15
+                ? "Moderate"
+                : "Balanced";
+            tableSummary.innerHTML = `
+              <span><strong>Due:</strong> ${metrics.statusCounts.due}</span>
+              <span><strong>Critical:</strong> ${metrics.statusCounts.critical}</span>
+              <span><strong>Avg need:</strong> ${metrics.avgNeed.toFixed(1)}</span>
+              <span><strong>Staffing strain:</strong> ${strainLabel}</span>
+            `;
+          }
+        };
+
+        bedBody.addEventListener("click", (e) => {
+          const tr = e.target.closest("tr");
+          if (!tr) return;
+          selectedRoom = Number(tr.dataset.room);
+          renderTable();
+          if (selectionTimer) clearTimeout(selectionTimer);
+          selectionTimer = setTimeout(() => {
+            selectedRoom = null;
+            renderTable();
+          }, 5000);
+        });
+
+        const handleTableEdit = (e) => {
+          const input = e.target;
+          const field = input.dataset.field;
+          if (!field) return;
+          const tr = input.closest("tr");
+          if (!tr) return;
+          const room = Number(tr.dataset.room);
+          const row = rooms.find((r) => r.room === room);
+          if (!row) return;
+          row[field] = input.value;
+          if (field === "nurse") renderTable();
+        };
+
+        bedBody.addEventListener("input", handleTableEdit);
+        bedBody.addEventListener("change", handleTableEdit);
+        completeRoundBtn.addEventListener("click", () => {
+          if (!selectedRoom) return;
+          const row = rooms.find((r) => r.room === selectedRoom);
+          if (!row) return;
+          const now = new Date();
+          const hours = now.getHours();
+          const minutes = now.getMinutes().toString().padStart(2, "0");
+          const ampm = hours >= 12 ? "P" : "A";
+          const displayHour = ((hours + 11) % 12) + 1;
+          row.time = `${displayHour}:${minutes} ${ampm}`;
+          row.roundedAgo = 0;
+          row.roundInterval = 60;
+          row.lastRoundedAt = Date.now();
+          row.roundingHistory = trimHistory(row.roundingHistory || []);
+          row.roundingHistory.push(row.lastRoundedAt);
+          renderTable();
+        });
+        dischargeBtn.addEventListener("click", () => {
+          if (!selectedRoom) return;
+          const row = rooms.find((r) => r.room === selectedRoom);
+          if (!row) return;
+          row.status = "gray";
+          row.nurse = "";
+          row.cna = "";
+          row.time = "";
+          row.patient = "";
+          row.physician = "";
+          row.sp = "";
+          row.iso = "";
+          row.n = "";
+          row.r = "";
+          row.t = "";
+          row.assist = "";
+          row.fall = "";
+          row.diet = "";
+          row.roundedAgo = 0;
+          row.lastRoundedAt = 0;
+          row.roundInterval = 60;
+          row.roundState = "ok";
+          row.roundDrift = 0;
+          row.roundingHistory = [];
+          renderTable();
+        });
+
+        // Modal setup
+        const modalBackdrop = document.createElement("div");
+        modalBackdrop.className = "modal-backdrop";
+        modalBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <h3>Edit assignment</h3>
+            <form id="editForm">
+              <label>Room
+                <input name="room" class="cell-input" disabled />
+              </label>
+              <label>Status
+                <select name="status" class="cell-input">
+                  <option value="green">🟢 Stable</option>
+                  <option value="yellow">🟡 Watch</option>
+                  <option value="blue">🔵 New</option>
+                  <option value="red">🔴 Alert</option>
+                  <option value="gray">⚫ Pending</option>
+                </select>
+              </label>
+              <label>Nurse
+                <input name="nurse" class="cell-input nurse-input" required />
+              </label>
+              <label>CNA
+                <input name="cna" class="cell-input" />
+              </label>
+              <label>Time Out
+                <input name="time" class="cell-input" />
+              </label>
+              <label>Last Rounded (minutes ago)
+                <input name="roundedAgo" type="number" min="0" class="cell-input" />
+              </label>
+              <label>Rounding Interval (minutes)
+                <input name="roundInterval" type="number" min="15" step="5" class="cell-input" />
+              </label>
+              <label>Patient
+                <input name="patient" class="cell-input" />
+              </label>
+              <label>Physician
+                <input name="physician" class="cell-input" />
+              </label>
+              <label>Special Considerations
+                <input name="sp" class="cell-input" />
+              </label>
+              <label>Iso
+                <input name="iso" class="cell-input" />
+              </label>
+              <label>N (Notes)
+                <input name="n" class="cell-input" />
+              </label>
+              <label>R (Risks)
+                <input name="r" class="cell-input" />
+              </label>
+              <label>T (Tasks)
+                <input name="t" class="cell-input" />
+              </label>
+              <label>Assist
+                <select name="assist" class="cell-input">
+                  <option value=""></option>
+                  <option value="🚶 Walking assist">🚶 Walking assist</option>
+                  <option value="🔄 Transfer assist">🔄 Transfer assist</option>
+                  <option value="🏗️ Lift required">🏗️ Lift required</option>
+                  <option value="♿ Wheelchair transport">♿ Wheelchair transport</option>
+                </select>
+              </label>
+              <label>Fall
+                <select name="fall" class="cell-input">
+                  <option value=""></option>
+                  <option value="⭐">⭐</option>
+                  <option value="⚠️">⚠️</option>
+                  <option value="🛑">🛑</option>
+                  <option value="✨">✨</option>
+                </select>
+              </label>
+              <label>Diet
+                <select name="diet" class="cell-input">
+                  <option value=""></option>
+                  <option value="Regular">Regular</option>
+                  <option value="Cardiac">Cardiac</option>
+                  <option value="Pureed">Pureed</option>
+                  <option value="Soft">Soft</option>
+                  <option value="Clear liquids">Clear liquids</option>
+                  <option value="NPO">NPO</option>
+                </select>
+              </label>
+              <div class="actions">
+                <button type="button" class="action-btn secondary" id="closeModal">Cancel</button>
+                <button type="submit" class="action-btn">Save</button>
+              </div>
+            </form>
+          </div>
+        `;
+        document.body.appendChild(modalBackdrop);
+
+        const editForm = modalBackdrop.querySelector("#editForm");
+        const closeModalBtn = modalBackdrop.querySelector("#closeModal");
+
+        const openModal = () => {
+          if (!selectedRoom) return;
+          const row = rooms.find((r) => r.room === selectedRoom);
+          if (!row) return;
+          Object.keys(row).forEach((key) => {
+            const input = editForm.elements.namedItem(key);
+            if (input) {
+              input.value = row[key] || "";
+            }
+          });
+          modalBackdrop.style.display = "flex";
+        };
+
+        const closeModal = () => {
+          modalBackdrop.style.display = "none";
+        };
+
+        openEditorBtn.addEventListener("click", openModal);
+        togglePrivacyBtn.addEventListener("click", () => {
+          privacyMasked = !privacyMasked;
+          togglePrivacyBtn.textContent = privacyMasked
+            ? "Privacy on"
+            : "Privacy off";
+          renderTable();
+        });
+        closeModalBtn.addEventListener("click", closeModal);
+        modalBackdrop.addEventListener("click", (e) => {
+          if (e.target === modalBackdrop) closeModal();
+        });
+
+        // Assignment Fluidity modal
+        const assignmentBackdrop = document.createElement("div");
+        assignmentBackdrop.className = "modal-backdrop";
+        assignmentBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <div id="carefusion-app"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeAssignment">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(assignmentBackdrop);
+        const closeAssignmentBtn = assignmentBackdrop.querySelector("#closeAssignment");
+        assignmentInfoBtn.addEventListener("click", () => {
+          assignmentBackdrop.style.display = "flex";
+          renderCarefusion();
+          runCarefusionAssignment();
+        });
+        closeAssignmentBtn.addEventListener("click", () => {
+          assignmentBackdrop.style.display = "none";
+        });
+        assignmentBackdrop.addEventListener("click", (e) => {
+          if (e.target === assignmentBackdrop) assignmentBackdrop.style.display = "none";
+        });
+
+        // Storyline modal
+        const storylineBackdrop = document.createElement("div");
+        storylineBackdrop.className = "modal-backdrop";
+        storylineBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <div id="storyline-card"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeStoryline">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(storylineBackdrop);
+        const closeStorylineBtn = storylineBackdrop.querySelector("#closeStoryline");
+        storylineBtn.addEventListener("click", () => {
+          storylineBackdrop.style.display = "flex";
+          renderStorylineCard();
+        });
+        closeStorylineBtn.addEventListener("click", () => {
+          storylineBackdrop.style.display = "none";
+        });
+        storylineBackdrop.addEventListener("click", (e) => {
+          if (e.target === storylineBackdrop) storylineBackdrop.style.display = "none";
+        });
+
+        // Storyline logic
+        const computeRoundingRhythm = (events) => {
+          if (!events || events.length < 2) return "—";
+          const intervals = [];
+          for (let i = 0; i < events.length - 1; i++) {
+            intervals.push(Math.abs(events[i] - events[i + 1]));
+          }
+          const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          return avg.toFixed(1) + " hrs";
+        };
+
+        const computePatternScore = (arr) => arr.reduce((a, b) => a + b, 0);
+
+        const computeComfortTrend = (scores) => {
+          if (!scores.length) return { trend: "stable", avg: "—" };
+          const diff = scores[scores.length - 1] - scores[0];
+          const trend = diff > 0 ? "improving" : diff < 0 ? "declining" : "stable";
+          const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+          return { trend, avg };
+        };
+
+        const predictNextShiftNeeds = (patient) => {
+          const mobility = computePatternScore(patient.mobilityEvents);
+          const restroom = computePatternScore(patient.restroomEvents);
+          const comfort = computeComfortTrend(patient.comfortScores);
+          const roundingRhythm = parseFloat(computeRoundingRhythm(patient.roundingEvents)) || 0;
+          const predictions = [];
+
+          if (mobility > 8) {
+            predictions.push({ msg: "Increased mobility checks likely required.", level: "medium" });
+          } else if (mobility > 12) {
+            predictions.push({ msg: "High mobility pattern — fall-prevention emphasis needed.", level: "high" });
+          }
+          if (restroom > 3) {
+            predictions.push({ msg: "Higher frequency toileting expected.", level: "medium" });
+          }
+          if (comfort.trend === "declining") {
+            predictions.push({ msg: "Comfort trending down — proactive comfort rounding recommended.", level: "high" });
+          }
+          if (roundingRhythm > 3) {
+            predictions.push({ msg: "Irregular rounding rhythm — consider tighter rounding windows.", level: "medium" });
+          }
+          if (!predictions.length) {
+            predictions.push({ msg: "No major needs predicted — maintain standard rounding rhythm.", level: "low" });
+          }
+          return predictions;
+        };
+
+        const buildStoryData = () => {
+          const row = rooms.find((r) => r.room === selectedRoom) || rooms[0];
+          const now = Date.now();
+          const lastRounded = row.lastRoundedAt || now;
+          const minutesAgo = row.roundedAgo || Math.round((now - lastRounded) / 60000);
+          const intervalMin = row.roundInterval || 60;
+          const roundingEvents = (row.roundingHistory || [])
+            .map((ts) => -Math.max(0, Math.round((now - ts) / 3600000)))
+            .sort((a, b) => b - a)
+            .slice(0, 5);
+          if (!roundingEvents.length) {
+            for (let i = 0; i < 5; i++) {
+              roundingEvents.push(-((minutesAgo + intervalMin * i) / 60));
+            }
+          }
+          const assistText = (row.assist || "").toLowerCase();
+          const mobilityScore =
+            assistText.includes("lift") || assistText.includes("wheel")
+              ? 5
+              : assistText.includes("assist")
+              ? 3
+              : 1;
+          const restroomScore = row.t && row.t.toLowerCase().includes("br") ? 3 : 1;
+          const comfortScores = [3, 4, 3, 4, 2, 3];
+
+          const matchByRoom = (list) =>
+            list.find((x) => `${x.room}`.trim() === `${row.room}`.trim() && (x.time || x.pickup));
+
+          const appt = matchByRoom(appointments || []);
+          const shower = matchByRoom(showers || []);
+
+          return {
+            name: row.patient || "Patient",
+            room: row.room,
+            nurse: row.nurse || "—",
+            cna: row.cna || "—",
+            iso: row.iso || "",
+            assist: row.assist || "",
+            fall: row.fall || "",
+            diet: row.diet || "",
+            sp: row.sp || "",
+            appt,
+            shower,
+            last24hrContacts: [
+              { type: "rounding", time: -Math.max(1, Math.round(minutesAgo / 60) || 1) },
+              { type: "rounding", time: -Math.max(2, Math.round(minutesAgo / 60) + 2) },
+              { type: "cna check", time: -4 },
+              { type: "restroom", time: -6 },
+              { type: "mobility", time: -7 },
+              { type: "comfort", time: -8 },
+              { type: "incidentPrevented", time: -10, detail: "Fall prevented" },
+            ],
+            mobilityEvents: [mobilityScore, mobilityScore + 1, mobilityScore, mobilityScore + 2, mobilityScore + 1, mobilityScore],
+            restroomEvents: [restroomScore, restroomScore + 1, restroomScore, restroomScore, restroomScore, restroomScore],
+            comfortScores,
+            roundingEvents,
+            safetyPreventions: 2,
+          };
+        };
+
+        const renderStorylineCard = () => {
+          const data = buildStoryData();
+          const container = storylineBackdrop.querySelector("#storyline-card");
+          if (!container) return;
+
+          const roundingRhythm = computeRoundingRhythm(data.roundingEvents);
+          const mobilityTotal = computePatternScore(data.mobilityEvents);
+          const restroomTotal = computePatternScore(data.restroomEvents);
+          const comfort = computeComfortTrend(data.comfortScores);
+          const predictions = predictNextShiftNeeds(data);
+
+          const metaChips = [
+            data.iso ? `<span class="sl-badge medium">${data.iso}</span>` : "",
+            data.assist ? `<span class="sl-badge medium">${data.assist}</span>` : "",
+            data.fall ? `<span class="sl-badge high">Fall ${data.fall}</span>` : "",
+            data.diet ? `<span class="sl-badge low">${data.diet}</span>` : "",
+            data.sp ? `<span class="sl-badge low">${data.sp}</span>` : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
+          const apptRow = data.appt
+            ? `<div class="sl-item">Appointment: <strong>${data.appt.time || "TBD"}</strong> · Pickup: ${data.appt.pickup || "—"}</div>`
+            : "";
+          const showerRow = data.shower
+            ? `<div class="sl-item">Shower: <strong>${data.shower.time || "TBD"}</strong> · Pickup: ${data.shower.pickup || "—"}</div>`
+            : "";
+
+          container.innerHTML = `
+            <div class="sl-title">Patient Storyline Card™</div>
+            <div class="sl-sub">Dynamic snapshot of patient trends and predictive needs for handoff.</div>
+
+            <div class="sl-section">
+              <h3>Patient & Team</h3>
+              <div class="sl-item">Room <strong>${data.room}</strong> · Patient: <strong>${data.name}</strong></div>
+              <div class="sl-item">Nurse: <strong>${data.nurse}</strong> · CNA: <strong>${data.cna}</strong></div>
+              ${metaChips ? `<div class="sl-item">${metaChips}</div>` : ""}
+            </div>
+
+            <div class="sl-section">
+              <h3>Last 24 Hours of Contacts</h3>
+              ${data.last24hrContacts
+                .map(
+                  (c) =>
+                    `<div class="sl-item">• ${c.type} — ${Math.abs(c.time)} hrs ago ${
+                      c.detail ? `(${c.detail})` : ""
+                    }</div>`
+                )
+                .join("")}
+            </div>
+
+            <div class="sl-section">
+              <h3>Rounding Rhythm</h3>
+              <div class="sl-item">Average interval: <strong>${roundingRhythm}</strong></div>
+            </div>
+
+            <div class="sl-section">
+              <h3>Mobility & Restroom Patterns</h3>
+              <div class="sl-item">Mobility activity (last shift): <strong>${mobilityTotal}</strong></div>
+              <div class="sl-item">Restroom events: <strong>${restroomTotal}</strong></div>
+            </div>
+
+            <div class="sl-section">
+              <h3>Safety Incidents Prevented</h3>
+              <div class="sl-item"><strong>${data.safetyPreventions}</strong> incidents prevented</div>
+            </div>
+
+            <div class="sl-section">
+              <h3>Comfort Trends</h3>
+              <div class="sl-item">Trend: <strong>${comfort.trend}</strong> · Avg score: <strong>${comfort.avg}/5</strong></div>
+            </div>
+
+            <div class="sl-section">
+              <h3>Predicted Needs for Next Shift</h3>
+              ${predictions
+                .map(
+                  (p) =>
+                    `<div class="sl-item">
+                      <span class="sl-badge ${p.level}">${p.level.toUpperCase()}</span>
+                      ${p.msg}
+                    </div>`
+                )
+                .join("")}
+            </div>
+
+            ${apptRow || showerRow ? `<div class="sl-section"><h3>Upcoming</h3>${apptRow}${showerRow}</div>` : ""}
+          `;
+        };
+
+        // NOVA overview modal
+        const novaBackdrop = document.createElement("div");
+        novaBackdrop.className = "modal-backdrop";
+        novaBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <div class="nova-section">
+              <h3>NOVA: Dynamic Needs-Driven Orchestration</h3>
+              <p style="margin:0 0 6px; color:#47566f;">From hourly/manual/siloed rounding to adaptive, team-wide coordination.</p>
+              <div class="nova-grid">
+                <div class="nova-card">
+                  <h4>1) Needs-Driven Rounding Engine™</h4>
+                  <ul>
+                    <li>Pain/mobility/toileting/call-light/fall/pressure/emotional signals</li>
+                    <li>Adaptive rounding windows per patient</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>2) Whole-Team Visibility Grid™</h4>
+                  <ul>
+                    <li>Who was rounded / due / overdue</li>
+                    <li>Who can help now, who’s closest/available</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>3) CareFusion™ Assignment</h4>
+                  <ul>
+                    <li>Availability, fatigue, proximity, skills, risk priority</li>
+                    <li>Fluid distribution to level workload</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>4) Predictive Safety Alerts</h4>
+                  <ul>
+                    <li>Early warnings: unassisted get-up, falls, pain return, toileting, pressure</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>5) Silent Coordination Layer</h4>
+                  <ul>
+                    <li>Rounds → board/mobile update → doc autofill</li>
+                    <li>No alarms or interruptions</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>6) Patient Storyline Card™</h4>
+                  <ul>
+                    <li>24h contacts, rhythm, mobility/restroom, safety, comfort, predictions</li>
+                  </ul>
+                </div>
+                <div class="nova-card">
+                  <h4>7) Care Quality Ledger™</h4>
+                  <ul>
+                    <li>Risk reduction, reliability, fall prevention wins</li>
+                    <li>Staffing patterns, predictive accuracy, recommended workflow changes</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeNova">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(novaBackdrop);
+        const closeNovaBtn = novaBackdrop.querySelector("#closeNova");
+        novaOverviewBtn.addEventListener("click", () => {
+          novaBackdrop.style.display = "flex";
+        });
+        closeNovaBtn.addEventListener("click", () => {
+          novaBackdrop.style.display = "none";
+        });
+        novaBackdrop.addEventListener("click", (e) => {
+          if (e.target === novaBackdrop) novaBackdrop.style.display = "none";
+        });
+
+        // NOVA quality modal
+        const novaMetricsBackdrop = document.createElement("div");
+        novaMetricsBackdrop.className = "modal-backdrop";
+        novaMetricsBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <h3>NOVA – Team & Quality</h3>
+            <div id="novaQualityBody" style="font-size: 12px; line-height: 1.5; color: #10356b"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeNovaMetrics">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(novaMetricsBackdrop);
+        const closeNovaMetricsBtn = novaMetricsBackdrop.querySelector("#closeNovaMetrics");
+        novaMetricsBtn.addEventListener("click", () => {
+          novaMetricsBackdrop.style.display = "flex";
+          renderNovaQualityBox();
+        });
+        closeNovaMetricsBtn.addEventListener("click", () => {
+          novaMetricsBackdrop.style.display = "none";
+        });
+        novaMetricsBackdrop.addEventListener("click", (e) => {
+          if (e.target === novaMetricsBackdrop) novaMetricsBackdrop.style.display = "none";
+        });
+
+        // On-time rounds modal
+        const onTimeBackdrop = document.createElement("div");
+        onTimeBackdrop.className = "modal-backdrop";
+        onTimeBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <h3>On-time Rounding</h3>
+            <div id="onTimeBody" style="font-size:12px; line-height:1.6; color:#10356b"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeOnTime">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(onTimeBackdrop);
+        const closeOnTimeBtn = onTimeBackdrop.querySelector("#closeOnTime");
+        const onTimeBody = onTimeBackdrop.querySelector("#onTimeBody");
+
+        const renderOnTimeModal = () => {
+          if (!onTimeBody) return;
+          const rows = rooms
+            .filter((r) => r.patient)
+            .map((r) => ({
+              room: r.room,
+              patient: r.patient,
+              onTime: r.novaOnTimePct ?? 0,
+              state: r.roundState || "ok",
+              lastRounded: r.roundingHistory?.length ? new Date(r.roundingHistory[r.roundingHistory.length - 1]) : null,
+              last3: (r.roundingHistory || []).slice(-3).map((ts) => new Date(ts)),
+            }))
+            .sort((a, b) => b.onTime - a.onTime);
+
+          const rowsHtml = rows
+            .map((r) => {
+              const lastRounded = r.lastRounded ? r.lastRounded.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "N/A";
+              const last3 = r.last3.length
+                ? r.last3.map((d) => d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })).join(", ")
+                : "No rounds logged";
+              const stateLabel = r.state === "critical" ? "Critical" : r.state === "due" ? "Due" : r.state === "soon" ? "Soon" : "OK";
+              return `
+                <div style="padding:6px 0; border-bottom:1px solid #e5eaf3;">
+                  <div><strong>Room ${r.room}</strong> — ${r.patient}</div>
+                  <div>On-time: <strong>${r.onTime}%</strong> · State: ${stateLabel}</div>
+                  <div>Last rounded: ${lastRounded}</div>
+                  <div>Last 3 rounds: ${last3}</div>
+                </div>
+              `;
+            })
+            .join("");
+
+          onTimeBody.innerHTML = rowsHtml || "<div>No patients available.</div>";
+        };
+
+        onTimeBtn.addEventListener("click", () => {
+          renderOnTimeModal();
+          onTimeBackdrop.style.display = "flex";
+        });
+        closeOnTimeBtn.addEventListener("click", () => {
+          onTimeBackdrop.style.display = "none";
+        });
+        onTimeBackdrop.addEventListener("click", (e) => {
+          if (e.target === onTimeBackdrop) onTimeBackdrop.style.display = "none";
+        });
+
+        // More dropdown toggle
+        if (moreActionsBtn && moreMenu) {
+          moreActionsBtn.addEventListener("click", () => {
+            const isOpen = moreMenu.style.display === "block";
+            moreMenu.style.display = isOpen ? "none" : "block";
+          });
+          document.addEventListener("click", (e) => {
+            if (!moreMenu.contains(e.target) && e.target !== moreActionsBtn) {
+              moreMenu.style.display = "none";
+            }
+          });
+        }
+
+        editForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          if (!selectedRoom) return;
+          const row = rooms.find((r) => r.room === selectedRoom);
+          if (!row) return;
+          Array.from(editForm.elements).forEach((el) => {
+            if (!el.name || el.name === "room") return;
+            if (el.name === "roundedAgo" || el.name === "roundInterval") {
+              row[el.name] = Number(el.value) || 0;
+            } else {
+              row[el.name] = el.value;
+            }
+          });
+          closeModal();
+          renderTable();
+        });
+
+        togglePrivacyBtn.textContent = "Privacy on";
+        renderTable();
+
+        const renderList = (rows, target, fields) => {
+          if (!target) return;
+          target.innerHTML = "";
+          const fragment = document.createDocumentFragment();
+          rows.forEach((row, idx) => {
+            const tr = document.createElement("tr");
+            fields.forEach((field) => {
+              const td = document.createElement("td");
+              const input = document.createElement("input");
+              input.className = "cell-input";
+              input.value = row[field] || "";
+              input.dataset.idx = idx;
+              input.dataset.field = field;
+              td.appendChild(input);
+              tr.appendChild(td);
+            });
+            fragment.appendChild(tr);
+          });
+          target.appendChild(fragment);
+        };
+
+        const wireList = (target, rows) => {
+          if (!target) return;
+          target.addEventListener("input", (e) => {
+            const input = e.target;
+            const idx = Number(input.dataset.idx);
+            const field = input.dataset.field;
+            if (!Number.isInteger(idx) || !field) return;
+            rows[idx][field] = input.value;
+          });
+        };
+
+        renderList(appointments, apptBody, ["room", "time", "pickup"]);
+        renderList(showers, showerBody, ["room", "time", "pickup"]);
+        renderList(codeTeam, document.getElementById("codeBody"), [
+          "role",
+          "assigned",
+        ]);
+        wireList(apptBody, appointments);
+        wireList(showerBody, showers);
+        wireList(document.getElementById("codeBody"), codeTeam);
+
+        const updateCounts = () => {
+          const apptCountEl = document.getElementById("apptCount");
+          const codeCountEl = document.getElementById("codeCount");
+          const showerCountEl = document.getElementById("showerCount");
+          if (apptCountEl) apptCountEl.textContent = `(${appointments.length})`;
+          if (codeCountEl) codeCountEl.textContent = `(${codeTeam.length})`;
+          if (showerCountEl) showerCountEl.textContent = `(${showers.length})`;
+        };
+
+        renderNovaQualityBox();
+        autoScaleBoard();
+        updateCounts();
+        window.addEventListener("resize", autoScaleBoard);
+      })();
+    </script>
+  </body>
+</html>
+       
