@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NOVA Command Center</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #0d7bff;
+        --blue-deep: #0a4fb8;
+        --paper: #ffffff;
+        --sheet-border: #d5d8e0;
+        --cell-border: #e1e6ef;
+        --yellow: #fff8d6;
+        --muted: #6b7484;
+        --text: #111827;
+        --surface: #f8faff;
+        --shadow: 0 16px 60px rgba(15, 23, 42, 0.12);
+        --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Rubik, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        background: #eef2f9;
+        color: var(--text);
+        padding: 12px;
+      }
+      .shell {
+        max-width: 1280px;
+        margin: 0 auto;
+        background: var(--paper);
+        border: 1px solid var(--sheet-border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(13, 123, 255, 0.08), rgba(10, 79, 184, 0.04));
+        border: 1px solid #dbe4f3;
+      }
+      .title {
+        margin: 0;
+        font-size: 24px;
+        color: var(--blue-deep);
+        letter-spacing: 0.02em;
+      }
+      .subtitle {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .btn {
+        background: linear-gradient(135deg, #00e0ff, #0ea5e9);
+        color: #0b1224;
+        border: 1px solid #dbe4f3;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0, 224, 255, 0.25);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      .btn.secondary {
+        background: #eef4ff;
+        color: #0b3f78;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 36px rgba(13, 123, 255, 0.26);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.7fr 1.3fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--cell-border);
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+        padding: 14px;
+      }
+      .card h3 {
+        margin: 0 0 8px;
+        color: var(--blue-deep);
+        font-size: 15px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      th, td {
+        border: 1px solid var(--cell-border);
+        padding: 6px 8px;
+        text-align: left;
+      }
+      th {
+        background: #eaf2ff;
+        color: var(--blue-deep);
+        font-weight: 700;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 6px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid #d8e3ff;
+        background: #eef4ff;
+        color: #0b3f78;
+      }
+      .chip.warn { background: #fff6e5; color: #a15a00; border-color: #f5d9a5; }
+      .chip.danger { background: #ffeaea; color: #b91c1c; border-color: #f2c1c1; }
+      .status {
+        font-weight: 700;
+      }
+      .status.ok { color: #0f7a3c; }
+      .status.soon { color: #a15a00; }
+      .status.due { color: #c2410c; }
+      .status.critical { color: #b91c1c; }
+      .tempo-bar {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        display: flex;
+      }
+      .tempo-bar div {
+        height: 100%;
+      }
+      .tempo-ok { background: #c8f0d9; }
+      .tempo-soon { background: #ffe7bf; }
+      .tempo-due { background: #ffd5c0; }
+      .tempo-critical { background: #ffc7c7; }
+      .whatif {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .whatif label {
+        display: flex;
+        flex-direction: column;
+        font-weight: 700;
+        color: #0b3f78;
+        font-size: 12px;
+      }
+      .whatif input {
+        border: 1px solid var(--cell-border);
+        border-radius: 8px;
+        padding: 6px;
+        font: inherit;
+      }
+      .muted { color: var(--muted); font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div>
+          <h1 class="title">NOVA Command Center</h1>
+          <div class="subtitle">Unit-level orchestration: next actions, tempo, quality, and staffing simulations.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn secondary" id="backBtn">Back to Whiteboard</button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Global Action Queue™</h3>
+          <div class="muted" id="queueSummary"></div>
+          <table aria-label="Action queue">
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Room</th>
+                <th>Patient</th>
+                <th>Need</th>
+                <th>State</th>
+                <th>Drift</th>
+                <th>Recommended Action</th>
+                <th>Suggested Staff</th>
+              </tr>
+            </thead>
+            <tbody id="queueBody"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Unit Tempo & Staffing Strain</h3>
+          <div id="tempoStatus" style="margin-bottom:8px; font-weight:700;"></div>
+          <div class="tempo-bar" id="tempoBar"></div>
+          <div class="muted" id="tempoMeta" style="margin-top:6px;"></div>
+          <hr style="margin:12px 0; border:none; border-top:1px solid var(--cell-border);" />
+          <div id="strainStatus" style="font-weight:700; margin-bottom:6px;"></div>
+          <div class="muted" id="strainMeta"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h3>Care Quality Ledger™ + What‑if Simulation</h3>
+        <div id="ledgerSummary" class="muted"></div>
+        <div class="whatif">
+          <label>RN count
+            <input type="number" id="rnInput" min="0" step="1" value="3" />
+          </label>
+          <label>CNA count
+            <input type="number" id="cnaInput" min="0" step="1" value="2" />
+          </label>
+        </div>
+        <div id="whatifResult" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <script>
+      // --------------------------
+      // Data loading & helpers
+      // --------------------------
+      const loadSnapshot = () => {
+        try {
+          const raw = localStorage.getItem("novaSnapshot");
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (err) {
+          console.warn("No snapshot available", err);
+          return null;
+        }
+      };
+
+      const sampleRooms = [
+        { room: 201, patient: "Gwen Marra", nurse: "Evan", fall: "⚠️", novaNeedScore: 62, roundState: "soon", roundDrift: 1.05 },
+        { room: 202, patient: "George Washburn", nurse: "Marsha", fall: "🛑", novaNeedScore: 78, roundState: "due", roundDrift: 1.22 },
+        { room: 203, patient: "Thomas Jeffreys", nurse: "Pat", fall: "", novaNeedScore: 54, roundState: "ok", roundDrift: 0.5 },
+        { room: 204, patient: "Antonio Mora", nurse: "Stacia", fall: "⚠️", novaNeedScore: 70, roundState: "critical", roundDrift: 1.6 },
+        { room: 205, patient: "Randy Rockwell", nurse: "Evan", fall: "", novaNeedScore: 40, roundState: "ok", roundDrift: 0.2 },
+      ];
+
+      const computeNovaMetrics = (rooms) => {
+        const active = rooms.filter((r) => r.patient);
+        const statusCounts = { ok: 0, soon: 0, due: 0, critical: 0 };
+        let totalNeed = 0;
+        const nurseLoads = new Map();
+        active.forEach((r) => {
+          const state = r.roundState || "ok";
+          statusCounts[state] = (statusCounts[state] || 0) + 1;
+          totalNeed += r.novaNeedScore || 0;
+          if (r.nurse) {
+            const prev = nurseLoads.get(r.nurse) || { patients: 0, load: 0 };
+            prev.patients += 1;
+            prev.load += r.novaNeedScore || 0;
+            nurseLoads.set(r.nurse, prev);
+          }
+        });
+        const avgNeed = active.length ? totalNeed / active.length : 0;
+        return { statusCounts, avgNeed, nurseLoads };
+      };
+
+      const buildActionQueue = (rooms) => {
+        const scoreRow = (r) => {
+          const need = r.novaNeedScore || 0;
+          const drift = r.roundDrift || 0;
+          const fallWeight = (r.fall || "").includes("🛑") ? 20 : (r.fall || "").includes("⚠️") ? 10 : 0;
+          return need * 1.2 + drift * 50 + fallWeight;
+        };
+        const recommend = (r) => {
+          if ((r.fall || "").includes("🛑")) return "High fall-risk safety round";
+          if ((r.roundState || "") === "critical" || (r.roundDrift || 0) > 1.2) return "Immediate round";
+          if ((r.roundState || "") === "due") return "Round now (overdue)";
+          return "Check comfort & mobility";
+        };
+        return rooms
+          .filter((r) => r.patient)
+          .map((r) => ({
+            ...r,
+            priorityScore: scoreRow(r),
+            recommended: recommend(r),
+          }))
+          .sort((a, b) => b.priorityScore - a.priorityScore)
+          .slice(0, 10);
+      };
+
+      const computeUnitTempo = (metrics) => {
+        const { ok = 0, soon = 0, due = 0, critical = 0 } = metrics.statusCounts || {};
+        const total = ok + soon + due + critical || 1;
+        const driftRatio = (due * 1.2 + critical * 1.5 + soon * 0.9) / total;
+        let label = "GOOD – mostly on time";
+        let tone = "chip";
+        if (driftRatio > 1.1) {
+          label = "STRAINED – several overdue rounds";
+          tone = "chip warn";
+        }
+        if (driftRatio > 1.3) {
+          label = "OUT OF RHYTHM – many critical overdue rooms";
+          tone = "chip danger";
+        }
+        return { label, tone, distribution: { ok, soon, due, critical }, driftRatio };
+      };
+
+      const computeStaffStrain = (metrics) => {
+        const loads = metrics.nurseLoads || new Map();
+        const entries = loads instanceof Map ? Array.from(loads.entries()) : Object.entries(loads);
+        if (!entries.length) return { label: "No nurses assigned", detail: "", ratio: 1 };
+        const totals = entries.reduce((acc, [, v]) => {
+          acc.need += v.load || 0;
+          acc.count += 1;
+          if (!acc.avgPatients) acc.avgPatients = 0;
+          acc.avgPatients += v.patients || 0;
+          return acc;
+        }, { need: 0, count: 0, avgPatients: 0 });
+        const avgLoad = totals.count ? totals.need / totals.count : 1;
+        let busiest = entries[0];
+        entries.forEach((e) => { if (e[1].load > busiest[1].load) busiest = e; });
+        const ratio = avgLoad ? busiest[1].load / avgLoad : 1;
+        let label = "Staff strain: Balanced";
+        if (ratio >= 1.4) label = "Staff strain: High";
+        else if (ratio >= 1.15) label = "Staff strain: Moderate";
+        const detail = `Heaviest load: ${busiest[0]} — ${busiest[1].patients || 0} pts, load ${Math.round(busiest[1].load || 0)}`;
+        return { label, detail, ratio };
+      };
+
+      const renderActionQueue = (rows) => {
+        const body = document.getElementById("queueBody");
+        const summary = document.getElementById("queueSummary");
+        if (!body) return;
+        body.innerHTML = "";
+        rows.forEach((r, idx) => {
+          const tr = document.createElement("tr");
+          const cells = [
+            idx + 1,
+            r.room || "—",
+            r.patient || "—",
+            Math.round(r.novaNeedScore || 0),
+            `<span class="status ${r.roundState || "ok"}">${r.roundState || "ok"}</span>`,
+            `${Math.round((r.roundDrift || 0) * 100)}%`,
+            r.recommended || "—",
+            r.nurse || "Unassigned",
+          ];
+          cells.forEach((c) => {
+            const td = document.createElement("td");
+            td.innerHTML = c;
+            tr.appendChild(td);
+          });
+          body.appendChild(tr);
+        });
+        if (summary) {
+          summary.textContent = rows.length
+            ? "Top actions ranked by need, drift, and fall risk."
+            : "No actionable rooms available.";
+        }
+      };
+
+      const renderTempo = (tempo) => {
+        const statusEl = document.getElementById("tempoStatus");
+        const metaEl = document.getElementById("tempoMeta");
+        const bar = document.getElementById("tempoBar");
+        if (!statusEl || !bar) return;
+        statusEl.innerHTML = `<span class="${tempo.tone}">${tempo.label}</span>`;
+        const total = Object.values(tempo.distribution).reduce((a, b) => a + b, 0) || 1;
+        bar.innerHTML = "";
+        const seg = (cls, val) => {
+          const d = document.createElement("div");
+          d.className = cls;
+          d.style.width = `${(val / total) * 100}%`;
+          bar.appendChild(d);
+        };
+        seg("tempo-ok", tempo.distribution.ok || 0);
+        seg("tempo-soon", tempo.distribution.soon || 0);
+        seg("tempo-due", tempo.distribution.due || 0);
+        seg("tempo-critical", tempo.distribution.critical || 0);
+        if (metaEl) {
+          metaEl.textContent = `Ok: ${tempo.distribution.ok || 0} · Soon: ${tempo.distribution.soon || 0} · Due: ${tempo.distribution.due || 0} · Critical: ${tempo.distribution.critical || 0}`;
+        }
+      };
+
+      const renderStrain = (strain) => {
+        const statusEl = document.getElementById("strainStatus");
+        const metaEl = document.getElementById("strainMeta");
+        if (statusEl) statusEl.textContent = strain.label;
+        if (metaEl) metaEl.textContent = strain.detail || "";
+      };
+
+      const renderLedger = (metrics, rooms) => {
+        const ledger = document.getElementById("ledgerSummary");
+        const onTime = metrics.statusCounts.ok || 0;
+        const total = Object.values(metrics.statusCounts).reduce((a, b) => a + b, 0) || 1;
+        const pct = Math.round((onTime / total) * 100);
+        const highRisk = rooms.filter((r) => (r.fall || "").includes("🛑") || r.status === "red").length;
+        const highDrift = (metrics.statusCounts.due || 0) + (metrics.statusCounts.critical || 0);
+        if (ledger) {
+          ledger.innerHTML = `
+            <div class="chip">On-time coverage: ${pct}%</div>
+            <div class="chip warn">High-drift: ${highDrift}</div>
+            <div class="chip danger">High-risk patients: ${highRisk}</div>
+          `;
+        }
+      };
+
+      const runWhatIfSimulation = (metrics) => {
+        const rnInput = document.getElementById("rnInput");
+        const cnaInput = document.getElementById("cnaInput");
+        const out = document.getElementById("whatifResult");
+        if (!rnInput || !cnaInput || !out) return;
+        const rn = Number(rnInput.value) || 0;
+        const cna = Number(cnaInput.value) || 0;
+        const totalNeed = metrics.avgNeed * (Object.values(metrics.statusCounts).reduce((a, b) => a + b, 0) || 0);
+        const capacity = rn + cna * 0.7 || 1;
+        const projected = totalNeed / capacity;
+        let label = "Balanced";
+        if (projected > 80) label = "High";
+        else if (projected > 60) label = "Moderate";
+        out.innerHTML = `
+          <div style="margin-top:6px;">
+            <div class="chip ${label === "High" ? "danger" : label === "Moderate" ? "warn" : ""}">Projected strain: ${label}</div>
+            <div class="muted">With ${rn} RNs and ${cna} CNAs, projected load per staff: ${projected.toFixed(1)}</div>
+          </div>
+        `;
+      };
+
+      // --------------------------
+      // Init
+      // --------------------------
+      const snapshot = loadSnapshot();
+      const rooms = (snapshot && snapshot.rooms) || sampleRooms;
+      const metrics = snapshot?.novaMetrics || computeNovaMetrics(rooms);
+
+      renderActionQueue(buildActionQueue(rooms));
+      renderTempo(computeUnitTempo(metrics));
+      renderStrain(computeStaffStrain(metrics));
+      renderLedger(metrics, rooms);
+      runWhatIfSimulation(metrics);
+
+      document.getElementById("backBtn")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+
+      document.getElementById("rnInput")?.addEventListener("input", () => runWhatIfSimulation(metrics));
+      document.getElementById("cnaInput")?.addEventListener("input", () => runWhatIfSimulation(metrics));
+    </script>
+  </body>
+</html>

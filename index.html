@@ -698,6 +698,48 @@
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
       }
+      .quick-actions {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+      }
+      .qa-btn {
+        border: 1px solid #d5dce8;
+        background: #fff;
+        color: #0b3f78;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 10px;
+        cursor: pointer;
+        transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+      }
+      .qa-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(13, 123, 255, 0.18);
+        border-color: #a6c6ff;
+      }
+      .filters {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 6px 0;
+      }
+      .filter-chip {
+        border: 1px solid #d5dce8;
+        background: #f7f9ff;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        cursor: pointer;
+        color: #0b3f78;
+      }
+      .filter-chip.active {
+        background: #0d7bff;
+        color: #fff;
+        border-color: #0d7bff;
+      }
       .row-critical td { background: #ffecec !important; border-color: rgba(255, 158, 158, 0.6); }
       .row-due td { background: #fff6e5 !important; border-color: rgba(255, 204, 153, 0.6); }
       .row-soon td { background: #f4f7ff !important; border-color: rgba(186, 206, 255, 0.6); }
@@ -934,21 +976,29 @@
               <button class="action-btn" id="completeRound">
                 Complete round
               </button>
+              <button class="action-btn" id="openCommandCenter">
+                NOVA Command Center
+              </button>
+              <button class="action-btn secondary" id="openStats">
+                Unit Stats
+              </button>
               <button class="action-btn danger" id="markDischarge">
                 Mark empty room
               </button>
-              <button class="action-btn secondary" id="togglePrivacy">
-                Privacy mode
-              </button>
-              <button class="action-btn" id="openEditor">Edit selected</button>
-              <div class="dropdown" style="position: relative;">
-                <button class="action-btn secondary" id="moreActions">More ▾</button>
+            <button class="action-btn secondary" id="togglePrivacy">
+              Privacy mode
+            </button>
+            <button class="action-btn" id="openEditor">Edit selected</button>
+            <button class="action-btn secondary" id="resetBoardBtn">Reset board</button>
+            <div class="dropdown" style="position: relative;">
+              <button class="action-btn secondary" id="moreActions">More ▾</button>
                 <div id="moreMenu" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #dbe4f3; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); min-width:180px; z-index:10;">
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none;" id="showAssignmentInfo">CareFusion Assignment</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showStoryline">Storyline Card</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showNovaOverview">NOVA Overview</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showNovaMetrics">NOVA Quality</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showOnTime">On-time Rounds</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showFalls">FallWatch™</button>
                 </div>
               </div>
             </div>
@@ -959,12 +1009,21 @@
             <span><strong>Avg need:</strong> 0</span>
             <span><strong>Staffing strain:</strong> Balanced</span>
           </div>
+          <div class="filters" id="filters">
+            <span style="font-weight:700; color:#0b3f78;">Filter:</span>
+            <button class="filter-chip" data-round="all">All</button>
+            <button class="filter-chip" data-round="soon">Soon</button>
+            <button class="filter-chip" data-round="due">Due</button>
+            <button class="filter-chip" data-round="critical">Critical</button>
+            <button class="filter-chip" data-iso="true">Isolation</button>
+            <button class="filter-chip" data-fall="true">Fall risk</button>
+          </div>
           <table class="bed-table" aria-label="Bed assignments">
-            <thead>
-              <tr>
-                <th class="status">Status</th>
-                <th class="room">Room</th>
-                <th class="round">Rounding</th>
+        <thead>
+          <tr>
+            <th class="status">Status</th>
+            <th class="room">Room</th>
+            <th class="round">Rounding</th>
                 <th class="nurse">Nurse</th>
                 <th class="cna">CNA</th>
                 <th class="time">Time Out</th>
@@ -975,13 +1034,14 @@
                 <th>Needs</th>
                 <th>Risk</th>
                 <th>Therapy</th>
-                <th>Assist</th>
-                <th>Fall</th>
-                <th>Diet</th>
-              </tr>
-            </thead>
-            <tbody id="bedBody"></tbody>
-          </table>
+            <th>Assist</th>
+            <th>Fall</th>
+            <th>Diet</th>
+            <th style="width:90px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bedBody"></tbody>
+      </table>
         </div>
       </section>
 
@@ -1084,18 +1144,24 @@
     </datalist>
     <script>
       (() => {
+        const STORAGE_KEY = "novaBoardState";
         const bedBody = document.getElementById("bedBody");
         const apptBody = document.getElementById("apptBody");
         const showerBody = document.getElementById("showerBody");
+        const filtersEl = document.getElementById("filters");
         const openEditorBtn = document.getElementById("openEditor");
+        const openCommandBtn = document.getElementById("openCommandCenter");
+        const openStatsBtn = document.getElementById("openStats");
         const togglePrivacyBtn = document.getElementById("togglePrivacy");
         const dischargeBtn = document.getElementById("markDischarge");
         const completeRoundBtn = document.getElementById("completeRound");
+        const resetBoardBtn = document.getElementById("resetBoardBtn");
         const assignmentInfoBtn = document.getElementById("showAssignmentInfo");
         const storylineBtn = document.getElementById("showStoryline");
         const novaOverviewBtn = document.getElementById("showNovaOverview");
         const novaMetricsBtn = document.getElementById("showNovaMetrics");
         const onTimeBtn = document.getElementById("showOnTime");
+        const fallsBtn = document.getElementById("showFalls");
         const moreActionsBtn = document.getElementById("moreActions");
         const moreMenu = document.getElementById("moreMenu");
         const tableSummary = document.getElementById("tableSummary");
@@ -1326,33 +1392,50 @@
           },
         ];
 
-        const rooms = [
-          ...initialRows,
-          ...Array.from({ length: 14 }, (_, i) => ({
-            status: "",
-            room: 210 + i,
-            nurse: "",
-            cna: "",
-            time: "",
-            roundedAgo: 0,
-            roundInterval: 60,
-            roundingHistory: [],
-            patient: "",
-            physician: "",
-            sp: "",
-            iso: "",
-            n: "",
-            r: "",
-            t: "",
-            assist: "",
-            fall: "",
-            diet: "",
-            lastRoundedAt: Date.now(),
-          })),
-        ];
-        let selectedRoom = rooms[0]?.room || null;
+        const rooms = [];
+        const hydrateRoomsDefault = () => {
+          rooms.splice(
+            0,
+            rooms.length,
+            ...initialRows,
+            ...Array.from({ length: 14 }, (_, i) => ({
+              status: "",
+              room: 210 + i,
+              nurse: "",
+              cna: "",
+              time: "",
+              roundedAgo: 0,
+              roundInterval: 60,
+              roundingHistory: [],
+              patient: "",
+              physician: "",
+              sp: "",
+              iso: "",
+              n: "",
+              r: "",
+              t: "",
+              assist: "",
+              fall: "",
+              diet: "",
+              lastRoundedAt: Date.now(),
+            }))
+          );
+        };
+        hydrateRoomsDefault();
+
+        const ensureStateIntegrity = () => {
+          if (!rooms.length || !rooms.some((r) => r && r.room)) {
+            hydrateRoomsDefault();
+          }
+          if (!selectedRoom || !rooms.find((r) => r.room === selectedRoom)) {
+            const firstValid = rooms.find((r) => r && r.room);
+            selectedRoom = firstValid ? firstValid.room : null;
+          }
+        };
         let selectionTimer = null;
         let privacyMasked = true;
+        const filterState = { round: "all", iso: false, fall: false };
+        const currentUser = "NOVA User";
 
         const appointments = Array.from({ length: 6 }, () => ({
           room: "",
@@ -1373,6 +1456,211 @@
           { role: "Doctor", assigned: "" },
         ];
 
+        restoreState();
+        const firstValidRoom = rooms.find((r) => r && r.room);
+        let selectedRoom = firstValidRoom ? firstValidRoom.room : rooms[0]?.room || null;
+        if (!rooms.length) {
+          hydrateRoomsDefault();
+          selectedRoom = rooms[0]?.room || null;
+        }
+
+        const persistState = () => {
+          try {
+            const payload = {
+              rooms,
+              appointments,
+              showers,
+              codeTeam,
+              shiftInputs: carefusionData.shiftInputs,
+              currentShift: carefusionData.currentShift,
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          } catch (err) {
+            console.warn("Unable to save board state", err);
+          }
+        };
+
+        const computeSnapshotMetrics = () => {
+          const active = rooms.filter((r) => r.patient);
+          const statusCounts = { ok: 0, soon: 0, due: 0, critical: 0 };
+          let totalNeed = 0;
+          const nurseLoads = new Map();
+          active.forEach((r) => {
+            statusCounts[r.roundState || "ok"] = (statusCounts[r.roundState || "ok"] || 0) + 1;
+            totalNeed += r.novaNeedScore || 0;
+            if (r.nurse) {
+              const prev = nurseLoads.get(r.nurse) || { patients: 0, load: 0 };
+              prev.patients += 1;
+              prev.load += r.novaNeedScore || 0;
+              nurseLoads.set(r.nurse, prev);
+            }
+          });
+          const avgNeed = active.length ? totalNeed / active.length : 0;
+          const nurseLoadsObj = {};
+          nurseLoads.forEach((v, k) => {
+            nurseLoadsObj[k] = v;
+          });
+          return { avgNeed, statusCounts, nurseLoads: nurseLoadsObj };
+        };
+
+        const persistSnapshot = () => {
+          try {
+            const snapshot = {
+              rooms,
+              novaMetrics: computeSnapshotMetrics(),
+              timestamp: Date.now(),
+            };
+            localStorage.setItem("novaSnapshot", JSON.stringify(snapshot));
+          } catch (err) {
+            console.warn("Unable to save snapshot", err);
+          }
+        };
+
+        function restoreState() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            if (Array.isArray(data.rooms)) {
+              rooms.splice(0, rooms.length, ...data.rooms.map((r) => ({
+                ...r,
+                lastRoundedAt: r.lastRoundedAt ? Number(r.lastRoundedAt) : 0,
+                roundingHistory: Array.isArray(r.roundingHistory)
+                  ? r.roundingHistory
+                      .map((ts) => {
+                        const tsNum = Number(ts.ts ?? ts);
+                        return Number.isNaN(tsNum) ? null : { ts: tsNum, user: ts.user || r.nurse || "", shift: ts.shift || data.currentShift || "day" };
+                      })
+                      .filter(Boolean)
+                  : [],
+              })));
+            }
+            if (Array.isArray(data.appointments)) {
+              appointments.splice(0, appointments.length, ...data.appointments);
+            }
+            if (Array.isArray(data.showers)) {
+              showers.splice(0, showers.length, ...data.showers);
+            }
+            if (Array.isArray(data.codeTeam)) {
+              codeTeam.splice(0, codeTeam.length, ...data.codeTeam);
+            }
+            if (data.shiftInputs) {
+              carefusionData.shiftInputs = data.shiftInputs;
+            }
+            if (data.currentShift) {
+              carefusionData.currentShift = data.currentShift;
+            }
+          } catch (err) {
+            console.warn("Unable to restore board state", err);
+          }
+          const hasValidRooms = rooms.some((r) => r && r.room);
+          if (!rooms.length || !hasValidRooms) {
+            hydrateRoomsDefault();
+          }
+        }
+
+        const hardResetState = () => {
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem("novaSnapshot");
+          } catch (err) {
+            console.warn("Unable to clear saved state", err);
+          }
+          hydrateRoomsDefault();
+          selectedRoom = rooms[0]?.room || null;
+          renderTable();
+        };
+
+        // Stats modal helpers
+        const statsBackdrop = document.createElement("div");
+        statsBackdrop.className = "modal-backdrop";
+        statsBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true" style="width:min(860px,90vw);">
+            <h3>Unit Statistics</h3>
+            <div id="statsBody" style="max-height:70vh; overflow:auto; font-size:12px; color:#10356b;"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeStats">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(statsBackdrop);
+        const closeStatsBtn = statsBackdrop.querySelector("#closeStats");
+
+        const buildStatsTable = (rows) => {
+          return `
+            <table class="cf-table">
+              <thead>
+                <tr>
+                  <th>Room</th>
+                  <th>Patient</th>
+                  <th>Nurse</th>
+                  <th>CNA</th>
+                  <th>State</th>
+                  <th>Drift</th>
+                  <th>Fall</th>
+                  <th>Assist</th>
+                  <th>NOVA Need</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows
+                  .map((r) => {
+                    return `<tr>
+                      <td>${r.room || "—"}</td>
+                      <td>${r.patient || "—"}</td>
+                      <td>${r.nurse || "—"}</td>
+                      <td>${r.cna || "—"}</td>
+                      <td>${r.roundState || "ok"}</td>
+                      <td>${Math.round((r.roundDrift || 0) * 100)}%</td>
+                      <td>${r.fall || "—"}</td>
+                      <td>${r.assist || "—"}</td>
+                      <td>${r.novaNeedScore != null ? Math.round(r.novaNeedScore) : "—"}</td>
+                    </tr>`;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
+          `;
+        };
+
+        const renderStats = () => {
+          const target = document.getElementById("statsBody");
+          if (!target) return;
+          NOVA_ENGINE.updateAll(rooms);
+          const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
+          const totalRooms = rooms.length;
+          const activeRooms = rooms.filter((r) => r.patient);
+          const highFall = rooms.filter((r) => (r.fall || "").includes("🛑")).length;
+          const statusCounts = metrics.statusCounts;
+          const nurseSummary = (() => {
+            const map = new Map();
+            activeRooms.forEach((r) => {
+              if (!r.nurse) return;
+              const prev = map.get(r.nurse) || { pts: 0, need: 0 };
+              prev.pts += 1;
+              prev.need += r.novaNeedScore || 0;
+              map.set(r.nurse, prev);
+            });
+            return Array.from(map.entries())
+              .map(([name, v]) => `<div class="chip" style="margin:2px 4px 0 0;">${name}: ${v.pts} pts · need ${Math.round(v.need)}</div>`)
+              .join("") || "<div class='muted'>No nurse assignments</div>";
+          })();
+
+          target.innerHTML = `
+            <div style="margin-bottom:8px; line-height:1.6;">
+              <strong>Total rooms:</strong> ${totalRooms} · <strong>Active patients:</strong> ${activeRooms.length}<br/>
+              <strong>Rounding status:</strong> OK ${statusCounts.ok || 0} · Soon ${statusCounts.soon || 0} · Due ${statusCounts.due || 0} · Critical ${statusCounts.critical || 0}<br/>
+              <strong>Avg NOVA need:</strong> ${metrics.avgNeed.toFixed(1)} · <strong>High fall-risk:</strong> ${highFall}
+            </div>
+            <div style="margin-bottom:8px;">
+              <div class="muted" style="margin-bottom:4px;">Nurse load summary:</div>
+              ${nurseSummary}
+            </div>
+            <div class="muted" style="margin:6px 0;">Rooms overview:</div>
+            <div style="overflow:auto; max-height:50vh;">${buildStatsTable(rooms)}</div>
+          `;
+        };
+
         const setBadgeColors = () => {
           nurseColors.clear();
           let colorIndex = 0;
@@ -1386,11 +1674,35 @@
         };
 
         const riskWeights = { high: 30, medium: 15, low: 5 };
+        const classifyFallLevel = (row) => {
+          const text = (row.fall || "").toLowerCase();
+          if (text.includes("🛑") || text.includes("high")) return "high";
+          if (text.includes("⚠️") || text.includes("mod")) return "moderate";
+          if (text.includes("⭐") || text.includes("low")) return "low";
+          return "none";
+        };
+        const classifyAssistLevel = (row) => {
+          const text = (row.assist || "").toLowerCase();
+          if (!text) return "independent";
+          if (text.includes("lift")) return "lift";
+          if (text.includes("wheel") || text.includes("chair")) return "wheelchair";
+          if (text.includes("stand") || text.includes("assist") || text.includes("walk")) return "assist";
+          return "independent";
+        };
 
         // Maintain rounding history per room (last 24h)
+        const normalizeHistory = (history = []) =>
+          (history || [])
+            .map((h) =>
+              typeof h === "number" ? { ts: h, user: "", shift: "" } : h
+            )
+            .filter((h) => h && Number.isFinite(Number(h.ts)))
+            .map((h) => ({ ...h, ts: Number(h.ts) }));
+
         const trimHistory = (history = []) => {
+          const normalized = normalizeHistory(history);
           const cutoff = Date.now() - 24 * 60 * 60000;
-          return history.filter((ts) => ts >= cutoff);
+          return normalized.filter((h) => h.ts >= cutoff);
         };
 
         const inferRisk = (row) => {
@@ -1452,13 +1764,13 @@
             row.roundState = this.classifyRoundState(row);
             row.novaNeedScore = this.computeNeedScore(row);
             row.novaStabilityScore = this.computeStabilityScore(row);
-            // On-time percent for last 24h
             const interval = row.roundInterval || 60;
             const hist = trimHistory(row.roundingHistory || []);
             const expected = interval > 0 ? Math.max(1, Math.round((24 * 60) / interval)) : 1;
             const actual = hist.length;
             row.novaOnTimePct = Math.min(100, Math.round((actual / expected) * 100));
             row.roundingHistory = hist;
+            row.lastRoundedAt = hist.length ? hist[hist.length - 1].ts : row.lastRoundedAt;
           },
 
           updateAll(rooms) {
@@ -1633,10 +1945,43 @@
           renderCarefusion();
         };
 
+        const applyAssignmentsToBoard = () => {
+          (carefusionData.assignments || []).forEach((a) => {
+            const row = rooms.find((r) => r.room === a.room);
+            if (!row) return;
+            if (a.role === "RN" && a.staff) {
+              row.nurse = a.staff;
+            } else if (a.role === "Tech" && a.staff) {
+              row.cna = a.staff;
+            } else if (a.role === "Support" && a.staff) {
+              row.sp = a.staff;
+            }
+          });
+          renderTable();
+          persistState();
+        };
+
         const renderCarefusion = () => {
           const app = assignmentBackdrop.querySelector("#carefusion-app");
           if (!app) return;
           const riskRank = { high: 3, medium: 2, low: 1 };
+          const nurseLoad = NOVA_ENGINE.computeUnitMetrics(rooms).statusCounts; // placeholder to trigger update
+          const workload = (() => {
+            const map = new Map();
+            rooms.forEach((r) => {
+              if (r.nurse) {
+                const prev = map.get(r.nurse) || { pts: 0, need: 0 };
+                prev.pts += 1;
+                prev.need += r.novaNeedScore || 0;
+                map.set(r.nurse, prev);
+              }
+            });
+            return Array.from(map.entries()).map(([name, v]) => ({
+              name,
+              pts: v.pts,
+              need: Math.round(v.need),
+            }));
+          })();
           const staffList = carefusionData.staff
             .map(
               (s) => `
@@ -1709,6 +2054,20 @@
               <div class="cf-card">
                 <div class="cf-subtitle">Staff (auto + shift)</div>
                 ${staffList || "<div class='cf-desc'>Add staff names to begin.</div>"}
+              </div>
+
+              <div class="cf-card">
+                <div class="cf-subtitle">Workload balance (RN)</div>
+                ${
+                  workload.length
+                    ? workload
+                        .map(
+                          (w) =>
+                            `<div class="cf-row"><span>${w.name}</span><span class="cf-chip">${w.pts} pts · need ${w.need}</span></div>`
+                        )
+                        .join("")
+                    : "<div class='cf-desc'>No nurse assignments yet.</div>"
+                }
               </div>
 
               <div class="cf-card">
@@ -1794,7 +2153,8 @@
             const el = app.querySelector(selector);
             if (el) {
               el.addEventListener("input", () => {
-                carefusionData.shiftInputs[carefusionData.currentShift][targetKey] = el.value;
+              carefusionData.shiftInputs[carefusionData.currentShift][targetKey] = el.value;
+                persistState();
               });
             }
           };
@@ -1838,6 +2198,7 @@
               });
               renderTable();
               runCarefusionAssignment();
+              persistState();
             });
           }
         };
@@ -1863,9 +2224,9 @@
         const agoFromStamp = row.lastRoundedAt ? Math.max(0, Math.round((now - row.lastRoundedAt) / 60000)) : 0;
         const ago = Math.max(0, Number.isFinite(agoFromStamp) ? agoFromStamp : Number(row.roundedAgo) || 0);
         row.roundedAgo = ago;
-        row.roundingHistory = trimHistory(row.roundingHistory || []);
-
-        const ratio = interval > 0 ? ago / interval : 0;
+          const hist = trimHistory(row.roundingHistory || []);
+          row.roundingHistory = hist;
+          const ratio = interval > 0 ? ago / interval : 0;
 
           let state = "ok";
           if (ratio >= 1.5) state = "critical";
@@ -1906,7 +2267,12 @@
 
           const meta = document.createElement("div");
           meta.className = "round-meta";
-          meta.textContent = `${interval}m window · drift ${(ratio * 100).toFixed(0)}%`;
+          const last3 = hist.slice(-3).map((h) => new Date(h.ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })).join(" · ") || "—";
+          const lastGap =
+            hist.length >= 2
+              ? Math.round((hist[hist.length - 1].ts - hist[hist.length - 2].ts) / 60000) + "m gap"
+              : "—";
+          meta.textContent = `${interval}m window · drift ${(ratio * 100).toFixed(0)}% · last: ${last3} · gap: ${lastGap}`;
 
           container.appendChild(badge);
           container.appendChild(progress);
@@ -1968,8 +2334,11 @@
         };
 
         // Dynamically scale board to fit viewport and rows
-        const autoScaleBoard = () => {
-          const visibleRows = rooms.length;
+        const autoScaleBoard = (countOverride) => {
+          const visibleRows =
+            typeof countOverride === "number" && !Number.isNaN(countOverride)
+              ? countOverride
+              : rooms.length;
           const approxRowHeight = 24; // slightly conservative to keep all rows in view
           const headerHeight = 120; // toolbar + summary + margins
           const sidebarHeight = 80; // padding allowance
@@ -1985,12 +2354,29 @@
           }
         };
 
+        const applyFilters = (row) => {
+          if (filterState.round !== "all" && row.roundState !== filterState.round) return false;
+          if (filterState.iso && !row.iso) return false;
+          if (filterState.fall && !(row.fall || "").trim()) return false;
+          return true;
+        };
+
         const renderTable = () => {
+          const hasValidRooms = rooms.some((r) => r && r.room);
+          if (!rooms.length || !hasValidRooms) {
+            hydrateRoomsDefault();
+            persistState();
+          }
+          if (!selectedRoom) {
+            const fallback = rooms.find((r) => r && r.room);
+            selectedRoom = fallback ? fallback.room : null;
+          }
           setBadgeColors();
           NOVA_ENGINE.updateAll(rooms);
+          const filteredRooms = rooms.filter(applyFilters);
           bedBody.innerHTML = "";
           const fragment = document.createDocumentFragment();
-          rooms.forEach((row) => {
+          filteredRooms.forEach((row) => {
             const tr = document.createElement("tr");
             tr.dataset.room = row.room;
             if (selectedRoom === row.room) tr.classList.add("row-selected");
@@ -2060,6 +2446,41 @@
             makeCell(row.assist, "assist"),
             makeCell(row.fall, "fall"),
             makeCell(row.diet, "diet"),
+            (() => {
+              const td = document.createElement("td");
+              const wrap = document.createElement("div");
+              wrap.className = "quick-actions";
+              const mkBtn = (icon, title, handler) => {
+                const b = document.createElement("button");
+                b.className = "qa-btn";
+                b.innerHTML = icon;
+                b.title = title;
+                b.setAttribute("aria-label", title);
+                b.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  handler();
+                });
+                return b;
+              };
+              wrap.appendChild(
+                mkBtn("⟳", "Complete round", () => {
+                  completeRound(row.room);
+                })
+              );
+              wrap.appendChild(
+                mkBtn("🞩", "Mark empty room", () => {
+                  emptyRoom(row.room);
+                })
+              );
+              wrap.appendChild(
+                mkBtn("✎", "Open editor", () => {
+                  selectedRoom = row.room;
+                  openModal();
+                })
+              );
+              td.appendChild(wrap);
+              return td;
+            })(),
           ];
 
           cells.forEach((td) => tr.appendChild(td));
@@ -2067,6 +2488,9 @@
         });
           bedBody.appendChild(fragment);
           renderNovaQualityBox();
+          autoScaleBoard(filteredRooms.length || rooms.length);
+          persistState();
+          persistSnapshot();
           // Update summary
           if (tableSummary) {
             const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
@@ -2108,30 +2532,32 @@
           if (!row) return;
           row[field] = input.value;
           if (field === "nurse") renderTable();
+          persistState();
         };
 
         bedBody.addEventListener("input", handleTableEdit);
         bedBody.addEventListener("change", handleTableEdit);
-        completeRoundBtn.addEventListener("click", () => {
-          if (!selectedRoom) return;
-          const row = rooms.find((r) => r.room === selectedRoom);
+        const completeRound = (roomNum) => {
+          const row = rooms.find((r) => r.room === roomNum);
           if (!row) return;
           const now = new Date();
+          const ts = Date.now();
           const hours = now.getHours();
           const minutes = now.getMinutes().toString().padStart(2, "0");
           const ampm = hours >= 12 ? "P" : "A";
           const displayHour = ((hours + 11) % 12) + 1;
           row.time = `${displayHour}:${minutes} ${ampm}`;
           row.roundedAgo = 0;
-          row.roundInterval = 60;
-          row.lastRoundedAt = Date.now();
+          row.roundInterval = row.roundInterval || 60;
+          row.lastRoundedAt = ts;
           row.roundingHistory = trimHistory(row.roundingHistory || []);
-          row.roundingHistory.push(row.lastRoundedAt);
+          row.roundingHistory.push({ ts, user: row.nurse || currentUser, shift: carefusionData.currentShift });
           renderTable();
-        });
-        dischargeBtn.addEventListener("click", () => {
-          if (!selectedRoom) return;
-          const row = rooms.find((r) => r.room === selectedRoom);
+          persistState();
+        };
+
+        const emptyRoom = (roomNum) => {
+          const row = rooms.find((r) => r.room === roomNum);
           if (!row) return;
           row.status = "gray";
           row.nurse = "";
@@ -2154,6 +2580,16 @@
           row.roundDrift = 0;
           row.roundingHistory = [];
           renderTable();
+          persistState();
+        };
+
+        completeRoundBtn.addEventListener("click", () => {
+          if (!selectedRoom) return;
+          completeRound(selectedRoom);
+        });
+        dischargeBtn.addEventListener("click", () => {
+          if (!selectedRoom) return;
+          emptyRoom(selectedRoom);
         });
 
         // Modal setup
@@ -2386,7 +2822,7 @@
           const minutesAgo = row.roundedAgo || Math.round((now - lastRounded) / 60000);
           const intervalMin = row.roundInterval || 60;
           const roundingEvents = (row.roundingHistory || [])
-            .map((ts) => -Math.max(0, Math.round((now - ts) / 3600000)))
+            .map((h) => -Math.max(0, Math.round((now - (h.ts || h)) / 3600000)))
             .sort((a, b) => b - a)
             .slice(0, 5);
           if (!roundingEvents.length) {
@@ -2648,14 +3084,19 @@
           if (!onTimeBody) return;
           const rows = rooms
             .filter((r) => r.patient)
-            .map((r) => ({
-              room: r.room,
-              patient: r.patient,
-              onTime: r.novaOnTimePct ?? 0,
-              state: r.roundState || "ok",
-              lastRounded: r.roundingHistory?.length ? new Date(r.roundingHistory[r.roundingHistory.length - 1]) : null,
-              last3: (r.roundingHistory || []).slice(-3).map((ts) => new Date(ts)),
-            }))
+            .map((r) => {
+              const hist = normalizeHistory(r.roundingHistory || []);
+              const lastRounded = hist.length ? new Date(hist[hist.length - 1].ts) : null;
+              const last3 = hist.slice(-3).map((h) => new Date(h.ts));
+              return {
+                room: r.room,
+                patient: r.patient,
+                onTime: r.novaOnTimePct ?? 0,
+                state: r.roundState || "ok",
+                lastRounded,
+                last3,
+              };
+            })
             .sort((a, b) => b.onTime - a.onTime);
 
           const rowsHtml = rows
@@ -2690,16 +3131,266 @@
           if (e.target === onTimeBackdrop) onTimeBackdrop.style.display = "none";
         });
 
+        // FallWatch modal
+        const fallsBackdrop = document.createElement("div");
+        fallsBackdrop.className = "modal-backdrop";
+        fallsBackdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <h3>NOVA FallWatch™</h3>
+            <div id="fallsBody" style="font-size:12px; line-height:1.6; color:#10356b; max-height:70vh; overflow:auto;"></div>
+            <div class="actions">
+              <button type="button" class="action-btn secondary" id="closeFalls">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(fallsBackdrop);
+        const closeFallsBtn = fallsBackdrop.querySelector("#closeFalls");
+        const fallsBody = fallsBackdrop.querySelector("#fallsBody");
+
+        const computeFallAnalytics = () => {
+          const active = rooms.filter((r) => r.patient);
+          const result = {
+            total: active.length,
+            high: [],
+            moderate: [],
+            low: [],
+            none: [],
+            lift: [],
+            overdueHigh: [],
+            soonHigh: [],
+            isoHigh: [],
+            pressureScore: 0,
+            hotspots: [],
+            focus: [],
+          };
+
+          active.forEach((r) => {
+            const fallLevel = classifyFallLevel(r);
+            const assistLevel = classifyAssistLevel(r);
+            const state = r.roundState || "ok";
+            const notes = (r.n || r.notes || "").toLowerCase();
+            const rounded = {
+              room: r.room,
+              patient: r.patient,
+              assist: assistLevel,
+              state,
+              nurse: r.nurse,
+              fall: r.fall,
+              drift: r.roundDrift || 0,
+            };
+            result[fallLevel === "none" ? "none" : fallLevel].push(rounded);
+            if (assistLevel === "lift" || assistLevel === "wheelchair") {
+              result.lift.push(rounded);
+            }
+            if (fallLevel === "high" && (state === "due" || state === "critical")) {
+              result.overdueHigh.push(rounded);
+            }
+            if (fallLevel === "high" && state === "soon") {
+              result.soonHigh.push(rounded);
+            }
+            if (fallLevel === "high" && (r.iso || "").trim()) {
+              result.isoHigh.push(rounded);
+            }
+
+            // hotspot / pressure scoring
+            let score = 0;
+            if (fallLevel === "high") score += 40;
+            else if (fallLevel === "moderate") score += 22;
+            if (assistLevel === "lift") score += 15;
+            else if (assistLevel === "wheelchair") score += 10;
+            else if (assistLevel === "assist") score += 6;
+            if (state === "critical") score += 18;
+            else if (state === "due") score += 12;
+            else if (state === "soon") score += 6;
+            if (notes.includes("restroom") || notes.includes("toilet") || notes.includes("bathroom")) score += 6;
+            if (notes.includes("confused") || notes.includes("dizzy") || notes.includes("unsteady")) score += 8;
+
+            result.hotspots.push({ ...rounded, score });
+            if (fallLevel === "high" || fallLevel === "moderate") {
+              result.pressureScore += score;
+            }
+          });
+
+          const maxPossible = Math.max(100, result.total * 50);
+          const pressurePct = Math.min(100, Math.round((result.pressureScore / maxPossible) * 100));
+          result.pressure = pressurePct;
+
+          result.hotspots = result.hotspots
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5);
+
+          // Next hour focus: pick top 3 with overdue/soon and high risk
+          result.focus = result.hotspots
+            .filter((h) => h.state !== "ok")
+            .slice(0, 3)
+            .map((h) => ({
+              room: h.room,
+              patient: h.patient,
+              action:
+                h.state === "critical" || h.state === "due"
+                  ? "Immediate safety round and toileting check"
+                  : "Check-in within the hour for mobility and re-education",
+            }));
+
+          return result;
+        };
+
+        const renderFallsModal = () => {
+          if (!fallsBody) return;
+          NOVA_ENGINE.updateAll(rooms);
+          const data = computeFallAnalytics();
+          const pct = (count) => (data.total ? Math.round((count / data.total) * 100) : 0);
+
+          const riskCard = (label, count, color) => `
+            <div class="cf-card" style="background:${color}; border:1px solid #dfe6f2; padding:10px; border-radius:10px; flex:1; min-width:140px;">
+              <div style="font-weight:800; color:#10356b; font-size:13px;">${label}</div>
+              <div style="font-size:13px; color:#0b3f78;"><strong>${count}</strong> patients · ${pct(count)}%</div>
+            </div>
+          `;
+
+          const listRooms = (arr) =>
+            arr.length
+              ? arr.map((r) => `Room ${r.room}${r.patient ? " – " + r.patient : ""}`).join(", ")
+              : "None";
+
+          const pressureLabel =
+            data.pressure >= 75 ? "High" : data.pressure >= 50 ? "Moderate" : "Low";
+
+          const recs = [];
+          if (data.overdueHigh.length) {
+            recs.push(
+              `Prioritize immediate rounding on high fall-risk rooms: ${listRooms(data.overdueHigh)}.`
+            );
+          }
+          if (data.lift.length >= 2) {
+            recs.push(
+              `Ensure lift/wheelchair assist is available for: ${listRooms(
+                data.lift
+              )}. Pair staff for transfers.`
+            );
+          }
+          if (data.soonHigh.length) {
+            recs.push(
+              `Tighten rounding windows for high-risk (due soon): ${listRooms(data.soonHigh)}.`
+            );
+          }
+          if (data.high.length >= 3) {
+            recs.push(
+              "Overall fall risk is elevated. Consider a quick team huddle to review fall precautions."
+            );
+          }
+          if (!recs.length) {
+            recs.push("Fall risk is stable. Maintain standard rounding rhythm and call-light education.");
+          }
+
+          const hotspotList =
+            data.hotspots.length === 0
+              ? "<div class='cf-desc'>No hotspots detected.</div>"
+              : data.hotspots
+                  .map(
+                    (h) => `
+                  <div class="cf-row" style="border-bottom:1px solid #eef1f7;">
+                    <span><strong>Room ${h.room}</strong> ${h.patient ? "– " + h.patient : ""}</span>
+                    <span class="cf-chip">${h.fall || "Risk"} · ${h.assist}</span>
+                  </div>`
+                  )
+                  .join("");
+
+          const focusList =
+            data.focus.length === 0
+              ? "<div class='cf-desc'>No immediate focus items.</div>"
+              : data.focus
+                  .map(
+                    (f) => `
+                    <div class="cf-item" style="padding:6px 0; border-bottom:1px solid #eef1f7;">
+                      <div><strong>Room ${f.room}</strong> ${f.patient ? "– " + f.patient : ""}</div>
+                      <div style="color:#47566f;">${f.action}</div>
+                    </div>`
+                  )
+                  .join("");
+
+          const assistBreakdown = (() => {
+            const buckets = {
+              lift: data.lift.length,
+              wheelchair: data.hotspots.filter((h) => h.assist === "wheelchair").length,
+              assist: data.hotspots.filter((h) => h.assist === "assist").length,
+              independent: data.hotspots.filter((h) => h.assist === "independent").length,
+            };
+            return `
+              <div class="cf-row"><span>Lift required</span><span class="cf-chip">${buckets.lift}</span></div>
+              <div class="cf-row"><span>Wheelchair</span><span class="cf-chip">${buckets.wheelchair}</span></div>
+              <div class="cf-row"><span>Assist / standby</span><span class="cf-chip">${buckets.assist}</span></div>
+              <div class="cf-row"><span>Independent</span><span class="cf-chip">${buckets.independent}</span></div>
+            `;
+          })();
+
+          fallsBody.innerHTML = `
+            <div class="info-note">
+              FallWatch™ surfaces risk, rounding pressure, and action steps to prevent falls in the next hour.
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+              ${riskCard("High risk", data.high.length, "#ffeaea")}
+              ${riskCard("Moderate risk", data.moderate.length, "#fff6e5")}
+              ${riskCard("Low / None", data.low.length + data.none.length, "#e8f7ee")}
+            </div>
+            <div class="cf-card" style="margin-bottom:10px;">
+              <div class="cf-subtitle">FallWatch Radar</div>
+              <div class="cf-desc">Unit fall pressure based on risk, assist needs, and rounding status.</div>
+              <div class="cf-row" style="align-items:center;">
+                <span>Pressure: <strong>${data.pressure}%</strong> (${pressureLabel})</span>
+                <div class="cf-bar" style="flex:1; margin-left:8px;"><div style="width:${data.pressure}%;"></div></div>
+              </div>
+            </div>
+            <div class="cf-card" style="margin-bottom:10px;">
+              <div class="cf-subtitle">Fall Risk Breakdown</div>
+              <div class="cf-desc">Where risk concentrates by assist level, rounding, and isolation.</div>
+              ${assistBreakdown}
+              <div class="cf-row"><span>High risk + overdue/critical</span><span class="cf-chip ${data.overdueHigh.length ? "danger" : ""}">${data.overdueHigh.length}</span></div>
+              <div class="cf-row"><span>High risk + due soon</span><span class="cf-chip">${data.soonHigh.length}</span></div>
+              <div class="cf-row"><span>High risk + isolation</span><span class="cf-chip">${data.isoHigh.length}</span></div>
+            </div>
+            <div class="cf-card" style="margin-bottom:10px;">
+              <div class="cf-subtitle">NOVA Fall Hotspots™</div>
+              ${hotspotList}
+            </div>
+            <div class="cf-card" style="margin-bottom:10px;">
+              <div class="cf-subtitle">Next Hour Fall Focus</div>
+              ${focusList}
+            </div>
+            <div class="cf-card">
+              <div class="cf-subtitle">Recommendations</div>
+              <ul style="margin:6px 0 0 16px; color:#10356b;">
+                ${recs.map((r) => `<li>${r}</li>`).join("")}
+              </ul>
+            </div>
+          `;
+        };
+
         // More dropdown toggle
         if (moreActionsBtn && moreMenu) {
-          moreActionsBtn.addEventListener("click", () => {
-            const isOpen = moreMenu.style.display === "block";
-            moreMenu.style.display = isOpen ? "none" : "block";
-          });
-          document.addEventListener("click", (e) => {
-            if (!moreMenu.contains(e.target) && e.target !== moreActionsBtn) {
-              moreMenu.style.display = "none";
-            }
+        moreActionsBtn.addEventListener("click", () => {
+          const isOpen = moreMenu.style.display === "block";
+          moreMenu.style.display = isOpen ? "none" : "block";
+        });
+        document.addEventListener("click", (e) => {
+          if (!moreMenu.contains(e.target) && e.target !== moreActionsBtn) {
+            moreMenu.style.display = "none";
+          }
+        });
+          // Falls modal wiring
+          if (fallsBtn) {
+            fallsBtn.addEventListener("click", () => {
+              renderFallsModal();
+              fallsBackdrop.style.display = "flex";
+            });
+          }
+          if (closeFallsBtn) {
+            closeFallsBtn.addEventListener("click", () => {
+              fallsBackdrop.style.display = "none";
+            });
+          }
+          fallsBackdrop.addEventListener("click", (e) => {
+            if (e.target === fallsBackdrop) fallsBackdrop.style.display = "none";
           });
         }
 
@@ -2718,9 +3409,11 @@
           });
           closeModal();
           renderTable();
+          persistState();
         });
 
         togglePrivacyBtn.textContent = "Privacy on";
+        ensureStateIntegrity();
         renderTable();
 
         const renderList = (rows, target, fields) => {
@@ -2752,6 +3445,7 @@
             const field = input.dataset.field;
             if (!Number.isInteger(idx) || !field) return;
             rows[idx][field] = input.value;
+            persistState();
           });
         };
 
@@ -2778,6 +3472,77 @@
         autoScaleBoard();
         updateCounts();
         window.addEventListener("resize", autoScaleBoard);
+
+        if (openCommandBtn) {
+          openCommandBtn.addEventListener("click", () => {
+            persistSnapshot();
+            window.location.href = "nova-command-center.html";
+          });
+        }
+        if (openStatsBtn) {
+          openStatsBtn.addEventListener("click", () => {
+            renderStats();
+            statsBackdrop.style.display = "flex";
+          });
+        }
+        if (closeStatsBtn) {
+          closeStatsBtn.addEventListener("click", () => {
+            statsBackdrop.style.display = "none";
+          });
+        }
+        statsBackdrop.addEventListener("click", (e) => {
+          if (e.target === statsBackdrop) statsBackdrop.style.display = "none";
+        });
+        if (resetBoardBtn) {
+          resetBoardBtn.addEventListener("click", () => {
+            hardResetState();
+          });
+        }
+
+        if (filtersEl) {
+          const refreshActive = () => {
+            filtersEl.querySelectorAll(".filter-chip").forEach((btn) => {
+              const round = btn.dataset.round;
+              const iso = btn.dataset.iso;
+              const fall = btn.dataset.fall;
+              let active = false;
+              if (round) active = filterState.round === round;
+              if (iso) active = filterState.iso;
+              if (fall) active = filterState.fall;
+              btn.classList.toggle("active", active);
+            });
+          };
+          filtersEl.addEventListener("click", (e) => {
+            const btn = e.target.closest(".filter-chip");
+            if (!btn) return;
+            if (btn.dataset.round) {
+              filterState.round = btn.dataset.round;
+            }
+            if (btn.dataset.iso) {
+              filterState.iso = !filterState.iso;
+            }
+            if (btn.dataset.fall) {
+              filterState.fall = !filterState.fall;
+            }
+            refreshActive();
+            renderTable();
+          });
+          refreshActive();
+        }
+
+        // Keyboard shortcuts for selected row
+        window.addEventListener("keydown", (e) => {
+          const tag = e.target.tagName.toLowerCase();
+          if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey) return;
+          if (!selectedRoom) return;
+          if (e.key === "c") {
+            completeRound(selectedRoom);
+          } else if (e.key === "x") {
+            emptyRoom(selectedRoom);
+          } else if (e.key === "e") {
+            openModal();
+          }
+        });
       })();
     </script>
   </body>
