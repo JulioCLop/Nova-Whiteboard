@@ -5,70 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Community Hospital - Nursing Board</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --blue: #0d7bff;
-        --blue-deep: #0a4fb8;
-        --paper: #ffffff;
-        --sheet-border: #d5d8e0;
-        --cell-border: #e1e6ef;
-        --yellow: #fff8d6;
-        --muted: #6b7484;
-        --text: #111827;
-        --surface: #f8faff;
-        --shadow: 0 16px 60px rgba(15, 23, 42, 0.12);
-        --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+        /* Hospital Business Palette */
+        --primary: #1b6fd9;
+        --primary-dark: #1254a3;
+        --primary-light: #5aa2ff;
+        --accent: #1aa6a3;
+        --accent-gradient: linear-gradient(135deg, #1b6fd9 0%, #1aa6a3 55%, #7dd8d1 100%);
+        --success: #1f9a6a;
+        --warning: #f2a93b;
+        --danger: #e04b4b;
+        --info: #2f7de1;
+
+        /* Surface Colors */
+        --bg-primary: #f3f7fb;
+        --bg-secondary: #e9f0f8;
+        --bg-tertiary: #dbe6f2;
+        --surface: #f7faff;
+        --surface-elevated: #ffffff;
+        --paper: rgba(255, 255, 255, 0.75);
+        --paper-solid: #ffffff;
+
+        /* Glassmorphism */
+        --glass: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(17, 45, 78, 0.08);
+        --glass-hover: rgba(255, 255, 255, 0.85);
+
+        /* Text Colors */
+        --text-primary: #0f2742;
+        --text-secondary: #425b74;
+        --text-muted: #6f8296;
+        --text-inverse: #f8fbff;
+        --text: var(--text-primary);
+        --muted: var(--text-muted);
+
+        /* Utility */
+        --blue: var(--primary);
+        --blue-deep: #0d3b73;
+        --sheet-border: #d2deeb;
+        --cell-border: #dbe5f0;
+
+        /* Borders & Shadows */
+        --border: rgba(17, 45, 78, 0.12);
+        --border-light: rgba(17, 45, 78, 0.06);
+        --shadow: 0 24px 60px rgba(16, 35, 66, 0.14), 0 0 0 1px rgba(17, 45, 78, 0.04);
+        --shadow-soft: 0 10px 24px rgba(16, 35, 66, 0.08);
+        --shadow-glow: 0 0 20px rgba(27, 111, 217, 0.25);
+        --shadow-glow-accent: 0 0 30px rgba(26, 166, 163, 0.35);
+        
+        /* Spacing */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        
         --board-scale: 1;
+        --row-height: 22px;
       }
 
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
+      
       html,
       body {
         height: 100vh;
         min-height: 100vh;
         overflow: hidden;
       }
+      
       body {
         margin: 0;
-        background: #eef2f9;
-        font-family: Rubik, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        color: var(--text);
-        padding: 2px;
-        font-size: 11px;
+        background: var(--bg-primary);
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(27, 111, 217, 0.12) 0%, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(26, 166, 163, 0.12) 0%, transparent 50%),
+          radial-gradient(at 50% 50%, rgba(125, 216, 209, 0.12) 0%, transparent 50%);
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        color: var(--text-primary);
+        padding: 8px;
+        font-size: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      /* Animated background particles */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+          radial-gradient(2px 2px at 20% 30%, rgba(27, 111, 217, 0.18), transparent),
+          radial-gradient(2px 2px at 60% 70%, rgba(26, 166, 163, 0.18), transparent),
+          radial-gradient(1px 1px at 50% 50%, rgba(125, 216, 209, 0.2), transparent);
+        background-size: 200% 200%;
+        animation: particleMove 20s ease infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+      
+      @keyframes particleMove {
+        0%, 100% { background-position: 0% 0%; }
+        50% { background-position: 100% 100%; }
       }
 
-      /* Paper sheet */
+      /* Glassmorphic sheet */
       .sheet {
         width: 100vw;
         min-height: 100vh;
         margin: 0;
-        background: var(--paper);
-        border: 1px solid var(--sheet-border);
-        box-shadow: var(--shadow);
-        border-radius: 12px;
-        padding: 12px;
+        background: var(--glass);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-xl);
+        padding: 16px;
         box-sizing: border-box;
+        position: relative;
+        z-index: 1;
       }
 
-      /* Header */
+      /* Modern Header with Glassmorphism */
       .header {
         display: flex;
         align-items: flex-start;
-        gap: 8px;
-        padding: 8px;
-        border-radius: 10px;
-        background: linear-gradient(
-          135deg,
-          rgba(13, 123, 255, 0.1),
-          rgba(10, 79, 184, 0.06)
-        );
-        border: 1px solid #dbe4f3;
-        box-shadow: var(--shadow-soft);
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: var(--radius-lg);
+        background: var(--glass);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent-gradient);
+        opacity: 0.8;
       }
       .hdr-left,
       .hdr-right {
@@ -80,27 +171,48 @@
       }
       .label {
         font-size: 13px;
-        color: var(--muted);
+        color: var(--text-muted);
         display: block;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
       .input-line {
-        border-bottom: 2px solid var(--cell-border);
+        border-bottom: 2px solid var(--border);
         display: inline-block;
-        padding: 6px 10px;
+        padding: 8px 12px;
         min-width: 140px;
+        background: transparent;
+        color: var(--text-primary);
+        transition: border-color 0.2s ease;
+      }
+      
+      .input-line:focus {
+        outline: none;
+        border-bottom-color: var(--primary);
       }
       .title {
+        font-family: 'Space Grotesk', sans-serif;
         font-weight: 700;
-        font-size: 30px;
-        color: var(--blue-deep);
-        letter-spacing: 2px;
+        font-size: 32px;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        text-shadow: 0 0 24px rgba(27, 111, 217, 0.25);
       }
       .title small {
         display: block;
-        font-size: 12px;
-        color: var(--muted);
+        font-size: 13px;
+        color: var(--text-muted);
         font-weight: 400;
+        margin-top: 4px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-family: 'Inter', sans-serif;
       }
 
       /* Main grid */
@@ -108,9 +220,9 @@
         display: grid;
         grid-template-columns: 2fr 330px;
         gap: 6px;
-        margin-top: 8px;
-        min-height: calc(100vh - 8px);
-        height: calc(100vh - 8px);
+        margin-top: 4px;
+        min-height: calc(100vh - 4px);
+        height: calc(100vh - 4px);
         overflow: hidden;
         transform-origin: top left;
         transform: scale(var(--board-scale));
@@ -122,37 +234,80 @@
         height: 100%;
       }
       .table-wrap {
-        border: 1px solid var(--cell-border);
-        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-        padding: 8px;
-        border-radius: 10px;
-        overflow: auto;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), var(--shadow-soft);
+        border: 1px solid var(--border);
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 12px;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         height: 100%;
         display: flex;
         flex-direction: column;
+        position: relative;
+      }
+      
+      .table-wrap::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      
+      .table-wrap::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+      
+      .table-wrap::-webkit-scrollbar-thumb {
+        background: var(--accent-gradient);
+        border-radius: 4px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+      
+      .table-wrap::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
       }
       .info-card {
-        background: linear-gradient(135deg, rgba(13, 123, 255, 0.08), rgba(10, 79, 184, 0.04));
-        border: 1px solid #dbe4f3;
-        border-radius: 12px;
-        padding: 12px 14px;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
         box-shadow: var(--shadow-soft);
-        margin: 10px 0;
+        margin: 16px 0;
+        position: relative;
+        overflow: hidden;
       }
+      
+      .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--accent-gradient);
+      }
+      
       .info-card h3 {
-        margin: 0 0 8px;
-        color: #0b3f78;
+        margin: 0 0 12px;
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 16px;
       }
+      
       .info-card p {
-        margin: 0 0 6px;
-        color: var(--text);
-        line-height: 1.5;
+        margin: 0 0 8px;
+        color: var(--text-secondary);
+        line-height: 1.6;
       }
+      
       .info-card ul {
-        margin: 6px 0;
-        padding-left: 18px;
-        color: var(--text);
+        margin: 8px 0;
+        padding-left: 20px;
+        color: var(--text-secondary);
       }
       .main > aside.panel {
         display: flex;
@@ -165,12 +320,12 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 11px;
+        font-size: 9px;
         table-layout: auto;
       }
       .shower-table input.cell-input {
-        font-size: 12px;
-        padding: 4px 6px;
+        font-size: 10px;
+        padding: 2px 4px;
         border-radius: 8px;
         background: linear-gradient(180deg, #f8fbff 0%, #eef3ff 100%);
         border: 1px solid #d5deef;
@@ -224,59 +379,110 @@
         text-align: center;
       }
       .emoji-cell .cell-input {
-        font-size: 15px;
+        font-size: 13px;
         text-align: center;
         background: linear-gradient(180deg, #f8fbff 0%, #eef3ff 100%);
         border-color: #cfd8ec;
         border-radius: 8px;
-        padding: 4px 6px;
+        padding: 2px 4px;
         font-weight: 700;
         min-width: 44px;
       }
       .emoji-cell .cell-input:focus {
-        box-shadow: 0 0 0 3px rgba(13, 123, 255, 0.16);
-        border-color: #0d7bff;
+        box-shadow: 0 0 0 3px rgba(27, 111, 217, 0.16);
+        border-color: var(--primary);
         background: #fff;
       }
       .bed-table {
         min-width: 1300px;
       }
+      .bed-table tbody tr {
+        height: var(--row-height);
+      }
+      .bed-table tbody td {
+        height: var(--row-height);
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+      }
+      .bed-table .cell-input {
+        height: calc(var(--row-height) - 4px);
+        padding: 0 4px;
+      }
+      .bed-table .round-badge {
+        height: calc(var(--row-height) - 4px);
+        padding: 0 6px;
+        font-size: 9px;
+        line-height: 1;
+      }
+      .bed-table .round-dot {
+        width: 7px;
+        height: 7px;
+      }
+      .bed-table .status-dot {
+        width: 16px;
+        height: 16px;
+      }
       thead th {
-        background: #eaf2ff;
-        color: var(--blue-deep);
-        padding: 4px 3px;
-        border: 1px solid var(--cell-border);
-        font-weight: 700;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: var(--text-primary);
+        padding: 4px 6px;
+        border: 1px solid var(--border);
+        font-weight: 600;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
         text-align: left;
         white-space: nowrap;
-        letter-spacing: 0.01em;
         position: sticky;
         top: 0;
-        z-index: 2;
-        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-bottom: 2px solid var(--primary);
       }
+      
       tbody td {
-        padding: 3px 3px;
-        border: 1px solid var(--cell-border);
+        padding: 2px 4px;
+        border: 1px solid var(--border);
         vertical-align: middle;
         word-break: break-word;
-        background: #fff;
-        transition: background 120ms ease, transform 120ms ease;
+        background: rgba(255, 255, 255, 0.7);
+        transition: all 0.2s ease;
+        color: var(--text-secondary);
+        font-size: 10px;
+        line-height: 1.2;
       }
+      
       tbody tr:nth-child(odd) td {
-        background: #f7f9fc;
+        background: rgba(255, 255, 255, 0.9);
       }
+      
       tbody tr:hover td {
-        background: #eef5ff;
+        background: rgba(27, 111, 217, 0.08);
+        border-color: rgba(27, 111, 217, 0.22);
+        transform: scale(1.01);
+      }
+      
+      tbody tr.selected td {
+        background: rgba(27, 111, 217, 0.16);
+        border-color: var(--primary);
+        box-shadow: inset 0 0 0 1px var(--primary);
       }
       .bed-table td.room,
       .bed-table th.room {
         font-weight: 700;
-        color: #0b3f78;
+        color: var(--text-primary);
+        white-space: nowrap;
       }
       .bed-table th.room,
       .bed-table td.room {
         min-width: 70px;
+      }
+      .bed-table td.room {
+        line-height: 1.1;
+        overflow: visible;
       }
       .bed-table th.status,
       .bed-table td.status {
@@ -286,6 +492,7 @@
       .bed-table th.round,
       .bed-table td.round {
         min-width: 100px;
+        overflow: visible;
       }
       .bed-table th.nurse,
       .bed-table td.nurse {
@@ -317,32 +524,46 @@
         display: flex;
         flex-direction: column;
         gap: 3px;
-        font-size: 10px;
+        font-size: 9px;
         line-height: 1.25;
         position: relative;
       }
       .round-badge {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 3px 5px;
-        border-radius: 8px;
-        font-weight: 700;
-        background: #eef2ff;
-        color: #0b3f78;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 10px;
+        background: rgba(27, 111, 217, 0.16);
+        color: var(--primary-light);
+        border: 1px solid rgba(27, 111, 217, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: 0 2px 8px rgba(27, 111, 217, 0.2);
       }
+      
       .round-badge.soon {
-        background: #fff7e6;
-        color: #a15a00;
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        border-color: rgba(245, 158, 11, 0.3);
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
       }
+      
       .round-badge.due {
-        background: #ffe8e8;
-        color: #b91c1c;
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.3);
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
         animation: pulse 1.2s ease-in-out infinite;
       }
+      
       .round-badge.critical {
-        background: #ffe0e0;
-        color: #991b1b;
+        background: rgba(220, 38, 38, 0.3);
+        color: #fca5a5;
+        border-color: rgba(220, 38, 38, 0.4);
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
         animation: pulse 1s ease-in-out infinite;
       }
       .round-dot {
@@ -362,7 +583,7 @@
       .round-progress div {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #4f8dfd, #0d7bff);
+        background: linear-gradient(90deg, var(--primary-light), var(--primary));
         transition: width 0.2s ease;
       }
       .round-progress.soon div {
@@ -396,9 +617,39 @@
         50% { transform: translateY(-1px); opacity: 0.75; }
         100% { transform: translateY(0); opacity: 1; }
       }
-      .rounding-cell:hover .round-progress,
-      .rounding-cell:hover .round-meta {
+      .round-tooltip-panel {
+        position: fixed;
+        z-index: 2000;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: var(--paper-solid);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-soft);
+        min-width: 200px;
+        max-width: 260px;
+        font-size: 11px;
+        color: var(--text-primary);
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.12s ease, transform 0.12s ease;
+        pointer-events: none;
+      }
+      .round-tooltip-panel.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .round-tooltip-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .round-tooltip-panel .round-progress {
         display: block;
+        margin-top: 2px;
+      }
+      .round-tooltip-panel .round-meta {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-muted);
       }
       /* Focus styles for inputs/buttons */
       .cell-input:focus,
@@ -408,29 +659,39 @@
       }
       @keyframes pulse {
         0% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 2px 8px rgba(239, 68, 68, 0.3);
         }
         70% {
-          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0), 0 2px 8px rgba(239, 68, 68, 0.3);
         }
         100% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 2px 8px rgba(239, 68, 68, 0.3);
         }
       }
       .cell-input {
         width: 100%;
-        border: 1px solid #d5dce8;
-        background: #ffffff;
-        color: var(--text);
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--text-primary);
         font: inherit;
-        padding: 4px 6px;
-        border-radius: 6px;
-        transition: border-color 120ms ease, box-shadow 120ms ease;
+        font-size: 9px;
+        padding: 2px 4px;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
       }
+      
+      .cell-input:hover {
+        border-color: var(--primary-light);
+        background: rgba(255, 255, 255, 0.95);
+      }
+      
       .cell-input:focus {
-        border-color: var(--blue);
+        border-color: var(--primary);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(13, 123, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(27, 111, 217, 0.2), var(--shadow-glow);
+        background: #ffffff;
       }
       .cell-input.nurse-input {
         font-weight: 700;
@@ -456,40 +717,59 @@
         flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 8px;
-        padding: 6px 8px;
-        border-radius: 10px;
-        background: #f5f8ff;
-        border: 1px solid #dbe4f3;
+        padding: 8px 12px;
+        border-radius: var(--radius-lg);
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        z-index: 30;
+      }
+      .table-controls,
+      .table-summary,
+      .reliability-strip {
+        position: relative;
+        z-index: 10;
       }
       .table-summary {
         font-size: 12px;
-        color: #10356b;
-        background: #eef4ff;
-        border: 1px solid #d8e3ff;
-        border-radius: 10px;
-        padding: 8px 10px;
+        color: var(--text-secondary);
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: 12px 16px;
         display: flex;
-        gap: 10px;
+        gap: 16px;
         flex-wrap: wrap;
+        box-shadow: var(--shadow-soft);
       }
       .table-summary strong {
-        color: #0a4fb8;
+        color: var(--primary-light);
+        font-weight: 600;
       }
       .board-title {
         margin: 0;
-        font-size: 16px;
-        letter-spacing: 0.03em;
+        font-size: 18px;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
-        color: var(--blue-deep);
-        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+        font-family: 'Space Grotesk', sans-serif;
       }
       .info-note {
         margin: 4px 0 8px;
         padding: 8px 10px;
         background: linear-gradient(
           135deg,
-          rgba(13, 123, 255, 0.08),
-          rgba(10, 79, 184, 0.04)
+          rgba(27, 111, 217, 0.08),
+          rgba(26, 166, 163, 0.04)
         );
         border: 1px solid #d5e3ff;
         border-radius: 10px;
@@ -505,25 +785,65 @@
         padding-left: 16px;
       }
       .action-btn {
-        background: linear-gradient(135deg, #00e0ff, #0ea5e9);
-        color: #0b1224;
-        border: none;
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-weight: 700;
+        background: var(--accent-gradient);
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 6px 12px;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 11px;
         cursor: pointer;
-        box-shadow: 0 10px 30px rgba(0, 224, 255, 0.25);
-        transition: transform 120ms ease, box-shadow 120ms ease;
+        box-shadow: var(--shadow-glow-accent), 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
       }
+      
+      .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+      
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow-accent), 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+      
+      .action-btn:hover::before {
+        left: 100%;
+      }
+      
+      .action-btn:active {
+        transform: translateY(0);
+      }
+      
       .action-btn.secondary {
-        background: #eef4ff;
-        color: #0b3f78;
-        box-shadow: none;
-        border: 1px solid #dbe4f3;
+        background: var(--glass);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--glass-border);
       }
+      
+      .action-btn.secondary:hover {
+        background: var(--glass-hover);
+        box-shadow: var(--shadow-soft), 0 0 20px rgba(27, 111, 217, 0.2);
+      }
+      
       .action-btn.danger {
-        background: linear-gradient(135deg, #ef4444, #b91c1c);
-        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      
+      .action-btn.danger:hover {
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 24px rgba(0, 0, 0, 0.3);
       }
       /* CareFusion assignment panel */
       .cf-shell {
@@ -714,68 +1034,16 @@
         height: 100%;
         background: linear-gradient(90deg, #4f8dfd, #10356b);
       }
-      /* Storyline card */
-      #storyline-card {
-        font-family: inherit;
-        max-width: 760px;
-        padding: 20px;
-        border-radius: 16px;
-        background: #ffffff;
-        border: 1px solid #d0d8e7;
-        box-shadow: 0 12px 28px rgba(12, 38, 94, 0.12);
-        margin: 10px auto;
-      }
-      .sl-title {
-        font-size: 18px;
-        font-weight: 800;
-        color: #10356b;
-        margin: 0 0 4px;
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
-      }
-      .sl-sub {
-        font-size: 12px;
-        color: #47566f;
-        margin: 0 0 12px;
-      }
-      .sl-section {
-        margin-bottom: 12px;
-      }
-      .sl-section h3 {
-        font-size: 14px;
-        font-weight: 700;
-        color: #10356b;
-        margin: 0 0 6px;
-      }
-      .sl-item {
-        background: #f5f7fb;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid #e1e7f3;
-        margin-bottom: 6px;
-        font-size: 12px;
-        color: #10356b;
-      }
-      .sl-badge {
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        display: inline-block;
-        margin-right: 6px;
-      }
-      .sl-badge.high { background: #ffe5e5; color: #b30000; }
-      .sl-badge.medium { background: #fff5d8; color: #9a6300; }
-      .sl-badge.low { background: #e7ffe5; color: #006d34; }
       .action-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 14px 36px rgba(13, 123, 255, 0.26);
+        box-shadow: 0 14px 36px rgba(27, 111, 217, 0.22);
       }
       .row-selected td {
         background: linear-gradient(180deg, #eef5ff 0%, #e1ecff 100%) !important;
         box-shadow:
-          inset 0 0 0 2px rgba(13, 123, 255, 0.5),
-          inset 3px 0 0 rgba(13, 123, 255, 0.35);
-        border-color: rgba(13, 123, 255, 0.35);
+          inset 0 0 0 2px rgba(27, 111, 217, 0.45),
+          inset 3px 0 0 rgba(27, 111, 217, 0.28);
+        border-color: rgba(27, 111, 217, 0.3);
         position: relative;
       }
       .row-selected td:first-child {
@@ -804,7 +1072,7 @@
       }
       .qa-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(13, 123, 255, 0.18);
+        box-shadow: 0 6px 14px rgba(27, 111, 217, 0.18);
         border-color: #a6c6ff;
       }
       .filters {
@@ -813,29 +1081,6 @@
         align-items: center;
         flex-wrap: wrap;
         margin: 6px 0;
-      }
-      .lens-toggle {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        flex-wrap: wrap;
-        margin: 6px 0 4px;
-      }
-      .lens-chip {
-        border: 1px solid #d5dce8;
-        background: #f0f4ff;
-        padding: 4px 10px;
-        border-radius: 10px;
-        font-size: 11px;
-        cursor: pointer;
-        color: #0b3f78;
-        font-weight: 700;
-      }
-      .lens-chip.active {
-        background: #0d7bff;
-        color: #fff;
-        border-color: #0d7bff;
-        box-shadow: 0 8px 20px rgba(13, 123, 255, 0.2);
       }
       .filter-chip {
         border: 1px solid #d5dce8;
@@ -847,12 +1092,12 @@
         color: #0b3f78;
       }
       .filter-chip.active {
-        background: #0d7bff;
+        background: var(--primary);
         color: #fff;
-        border-color: #0d7bff;
+        border-color: var(--primary);
       }
       .lens-highlight td {
-        box-shadow: inset 0 0 0 2px rgba(13, 123, 255, 0.25);
+        box-shadow: inset 0 0 0 2px rgba(27, 111, 217, 0.2);
         background: linear-gradient(180deg, #f4f7ff 0%, #e8f0ff 100%) !important;
       }
       .new-start {
@@ -895,41 +1140,6 @@
         color: #0b3f78;
         background: #eef4ff;
       }
-      .reliability-strip {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 6px;
-        align-items: center;
-        background: #f5f8ff;
-        border: 1px solid #dbe4f3;
-        border-radius: 10px;
-        padding: 8px 10px;
-        margin: 4px 0 8px;
-        font-size: 11px;
-        color: #10356b;
-      }
-      .reliability-strip strong { color: #0a4fb8; }
-      .mini-bar {
-        position: relative;
-        width: 100%;
-        height: 6px;
-        background: #e5e7eb;
-        border-radius: 999px;
-        overflow: hidden;
-      }
-      .mini-bar div {
-        height: 100%;
-        background: linear-gradient(90deg, #4f8dfd, #0d7bff);
-      }
-      .radar-line {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 4px 0;
-        font-size: 11px;
-        color: #10356b;
-      }
-      .radar-label { width: 70px; font-weight: 700; }
       .priority-table th,
       .priority-table td {
         border: 1px solid #dbe4f3;
@@ -944,14 +1154,19 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        padding: 2px 6px;
+        padding: 1px 6px;
         border-radius: 999px;
-        background: #e8fbe9;
-        color: #0f7a3c;
-        border: 1px solid #c5e6d2;
-        font-weight: 800;
-        font-size: 10px;
-        letter-spacing: 0.01em;
+        background: linear-gradient(135deg, #e7fbef, #dff6ea);
+        color: #0e6b38;
+        border: 1px solid rgba(15, 122, 60, 0.2);
+        font-weight: 700;
+        font-size: 9px;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+      .round-badge .streak-chip {
+        margin-left: 6px;
       }
       .row-critical td { background: #ffecec !important; border-color: rgba(255, 158, 158, 0.6); }
       .row-due td { background: #fff6e5 !important; border-color: rgba(255, 204, 153, 0.6); }
@@ -1000,19 +1215,29 @@
         100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
       }
       .patient-wrap {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 6px;
-        padding: 2px 4px;
+        padding: 0 4px;
         border-radius: 10px;
         background: linear-gradient(90deg, #f8fbff 0%, #ffffff 100%);
+        width: 100%;
+        box-sizing: border-box;
+        height: calc(var(--row-height) - 4px);
+      }
+      .patient-wrap .cell-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 100%;
       }
       .alert-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 7px;
-        border-radius: 12px;
+        padding: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
         font-weight: 800;
         font-size: 11px;
         background: linear-gradient(135deg, #e7f2ff 0%, #f9fbff 100%);
@@ -1020,6 +1245,14 @@
         border: 1px solid #b5d2ff;
         box-shadow: 0 6px 16px rgba(37, 99, 235, 0.14);
         animation: pillGlow 2s ease-in-out infinite;
+        justify-content: center;
+      }
+      .alert-placeholder {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: transparent;
+        border: 1px solid transparent;
       }
       @keyframes pillGlow {
         0% {
@@ -1038,27 +1271,72 @@
             0 0 0 0 rgba(37, 99, 235, 0.4);
         }
       }
+      /* Modern Modal Styles */
       .modal-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         display: none;
         align-items: center;
         justify-content: center;
         z-index: 1000;
+        animation: fadeIn 0.3s ease;
       }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
       .modal {
-        background: #fff;
-        border-radius: 14px;
-        padding: 18px;
+        background: var(--glass);
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        padding: 32px;
         width: min(720px, 90vw);
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+        box-shadow: var(--shadow), 0 0 40px rgba(27, 111, 217, 0.18);
+        position: relative;
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
+      
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
+      .modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--accent-gradient);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      }
+      
       .modal h3 {
-        margin: 0 0 12px;
-        color: var(--blue-deep);
+        margin: 0 0 20px;
+        color: var(--text-primary);
+        font-size: 24px;
+        font-weight: 700;
+        font-family: 'Space Grotesk', sans-serif;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       .modal form {
         display: grid;
@@ -1074,11 +1352,24 @@
       }
       .modal input,
       .modal textarea {
-        border: 1px solid var(--cell-border);
-        border-radius: 8px;
-        padding: 8px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-primary);
+        border-radius: var(--radius-sm);
+        padding: 12px;
         font-size: 14px;
         font-family: inherit;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+      
+      .modal input:focus,
+      .modal textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(27, 111, 217, 0.2);
+        background: #ffffff;
       }
       .modal .actions {
         margin-top: 12px;
@@ -1250,7 +1541,7 @@
       .box td input:focus {
         border-color: var(--blue);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(13, 123, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(27, 111, 217, 0.15);
       }
       .clickable-cell {
         cursor: pointer;
@@ -1295,52 +1586,38 @@
           <div class="table-actions">
             <h2 class="board-title">NOVA Whiteboard</h2>
             <div style="display: flex; gap: 6px; align-items:center; flex-wrap: wrap;">
-              <button class="action-btn" id="completeRound">
+              <button class="action-btn" id="completeRound" aria-label="Complete round for selected room" title="Complete round (C)">
                 Complete round
               </button>
-              <button class="action-btn" id="openCommandCenter">
+              <button class="action-btn" id="openCommandCenter" aria-label="Open NOVA Command Center dashboard">
                 NOVA Command Center
               </button>
-              <button class="action-btn danger" id="markDischarge">
+              <button class="action-btn danger" id="markDischarge" aria-label="Mark selected room as empty" title="Mark empty (X)">
                 Mark empty room
               </button>
-            <button class="action-btn secondary" id="togglePrivacy">
+            <button class="action-btn secondary" id="togglePrivacy" aria-label="Toggle privacy mode" aria-pressed="false">
               Privacy mode
             </button>
-            <button class="action-btn" id="openEditor">Edit selected</button>
-            <button class="action-btn secondary" id="resetBoardBtn">Reset board</button>
+            <button class="action-btn" id="openEditor" aria-label="Edit selected room details" title="Edit (E)">Edit selected</button>
+            <button class="action-btn secondary" id="resetBoardBtn" aria-label="Reset board to default state">Reset board</button>
             <div class="dropdown" style="position: relative;">
               <button class="action-btn secondary" id="moreActions">More ▾</button>
-                <div id="moreMenu" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #dbe4f3; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); min-width:180px; z-index:10;">
+                <div id="moreMenu" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #dbe4f3; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); min-width:180px; z-index:2000;">
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none;" id="showQuietSafety">Quiet Safety</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openStats">Unit Stats</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openPriorityQueue">Priority Queue</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openAutopilot">NOVA Autopilot</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="generateHandoff">Generate handoff</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showAssignmentInfo">CareFusion Assignment</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showStoryline">Storyline Card</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showNovaOverview">NOVA Overview</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showNovaMetrics">NOVA Quality</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showOnTime">On-time Rounds</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showFalls">FallWatch™</button>
                   <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showShowerModal">Shower Tracker</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openTwin">Digital Twin</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openCopilot">NOVA Copilot</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openPlaybooks">Playbook Suggestions</button>
-                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="showEquity">Equity Lens</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="openPlaybooks">Playbook Suggestions</button>
                 </div>
               </div>
             </div>
           </div>
-          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start; justify-content:space-between;">
-            <div class="lens-toggle" id="modeLenses">
-            <span style="font-weight:700; color:#0b3f78;">View lens:</span>
-            <button class="lens-chip" data-mode="all">All</button>
-            <button class="lens-chip" data-mode="falls">Falls</button>
-            <button class="lens-chip" data-mode="mobility">Mobility</button>
-            <button class="lens-chip" data-mode="toileting">Toileting</button>
-            <button class="lens-chip" data-mode="comfort">Comfort</button>
-            </div>
+          <div class="table-controls" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
             <div class="filters" id="filters">
             <span style="font-weight:700; color:#0b3f78;">Filter:</span>
             <button class="filter-chip" data-round="all">All</button>
@@ -1349,6 +1626,12 @@
             <button class="filter-chip" data-round="critical">Critical</button>
             <button class="filter-chip" data-iso="true">Isolation</button>
             <button class="filter-chip" data-fall="true">Fall risk</button>
+            <span style="font-weight:700; color:#0b3f78; margin-left:12px;">Focus:</span>
+            <button class="filter-chip" data-mode="all">All</button>
+            <button class="filter-chip" data-mode="falls">Falls</button>
+            <button class="filter-chip" data-mode="mobility">Mobility</button>
+            <button class="filter-chip" data-mode="toileting">Toileting</button>
+            <button class="filter-chip" data-mode="comfort">Comfort</button>
             </div>
           </div>
           <div class="table-summary" id="tableSummary">
@@ -1356,12 +1639,6 @@
             <span><strong>Critical:</strong> 0</span>
             <span><strong>Avg need:</strong> 0</span>
             <span><strong>Staffing strain:</strong> Balanced</span>
-          </div>
-          <div class="reliability-strip" id="reliabilityStrip">
-            <div><strong>On-time rounds:</strong> —</div>
-            <div><strong>Reliability streak leader:</strong> —</div>
-            <div><strong>Care debt:</strong> —</div>
-            <div class="mini-bar" aria-hidden="true"><div style="width:0%;"></div></div>
           </div>
           <table class="bed-table" aria-label="Bed assignments">
         <thead>
@@ -1481,21 +1758,11 @@
 
         <div class="box collapsible collapsed" data-open="false" style="margin-top: 8px;">
           <div class="box-heading">
-            <h3>Staff Load & Fairness</h3>
+            <h3>Staffing & Strain</h3>
             <button class="collapse-btn" data-open="false">Show</button>
           </div>
           <div class="box-body">
             <div id="staffFairnessBody" style="font-size:11px; color:#10356b; line-height:1.5;"></div>
-          </div>
-        </div>
-
-        <div class="box collapsible collapsed" data-open="false" style="margin-top: 8px;">
-          <div class="box-heading">
-            <h3>NOVA Radar</h3>
-            <button class="collapse-btn" data-open="false">Show</button>
-          </div>
-          <div class="box-body">
-            <div id="novaRadarBody" style="font-size:11px; color:#10356b;"></div>
           </div>
         </div>
         </aside>
@@ -1565,6 +1832,64 @@
     </datalist>
     <script>
       (() => {
+        // ==================== Utility Functions ====================
+        // XSS Protection: Sanitize HTML content
+        const sanitizeHTML = (str) => {
+          if (typeof str !== 'string') return '';
+          const div = document.createElement('div');
+          div.textContent = str;
+          return div.innerHTML;
+        };
+
+        // Safe innerHTML setter with XSS protection
+        const setSafeHTML = (element, html) => {
+          if (!element) return;
+          if (typeof html === 'string' && html.includes('<')) {
+            // Only allow safe HTML tags for user-generated content
+            const temp = document.createElement('div');
+            temp.textContent = html;
+            element.textContent = html;
+          } else {
+            element.innerHTML = html;
+          }
+        };
+
+        // Debounce function for performance optimization
+        const debounce = (func, wait) => {
+          let timeout;
+          return function executedFunction(...args) {
+            const later = () => {
+              clearTimeout(timeout);
+              func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+          };
+        };
+
+        // Enhanced error handler with user feedback
+        const handleError = (error, userMessage, context = '') => {
+          const errorDetails = error instanceof Error ? error.message : String(error);
+          console.error(`[${context}] ${errorDetails}`, error);
+          // openFeedback will be available after it's defined
+          if (typeof openFeedback === 'function') {
+            openFeedback('Error', userMessage || 'An unexpected error occurred. Please try again.');
+          }
+        };
+
+        // Check localStorage availability
+        const isLocalStorageAvailable = () => {
+          try {
+            const test = '__localStorage_test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        // ==================== Main Application ====================
         const STORAGE_KEY = "novaBoardState";
         const bedBody = document.getElementById("bedBody");
         const apptBody = document.getElementById("apptBody");
@@ -1578,27 +1903,18 @@
         const completeRoundBtn = document.getElementById("completeRound");
         const resetBoardBtn = document.getElementById("resetBoardBtn");
         const quietSafetyBtn = document.getElementById("showQuietSafety");
-        const autopilotBtn = document.getElementById("openAutopilot");
-        const twinBtn = document.getElementById("openTwin");
-        const copilotBtn = document.getElementById("openCopilot");
         const playbookBtn = document.getElementById("openPlaybooks");
         const priorityQueueBtn = document.getElementById("openPriorityQueue");
         const handoffBtn = document.getElementById("generateHandoff");
         const assignmentInfoBtn = document.getElementById("showAssignmentInfo");
-        const storylineBtn = document.getElementById("showStoryline");
         const novaOverviewBtn = document.getElementById("showNovaOverview");
-        const novaMetricsBtn = document.getElementById("showNovaMetrics");
         const onTimeBtn = document.getElementById("showOnTime");
         const fallsBtn = document.getElementById("showFalls");
         const showerModalBtn = document.getElementById("showShowerModal");
-        const equityBtn = document.getElementById("showEquity");
         const moreActionsBtn = document.getElementById("moreActions");
         const moreMenu = document.getElementById("moreMenu");
         const tableSummary = document.getElementById("tableSummary");
-        const modeLensesEl = document.getElementById("modeLenses");
-        const reliabilityStrip = document.getElementById("reliabilityStrip");
         const staffFairnessBody = document.getElementById("staffFairnessBody");
-        const novaRadarBody = document.getElementById("novaRadarBody");
         const toiletPriorityBody = document.getElementById("toiletPriorityBody");
         const toiletPriorityCount = document.getElementById("toiletPriorityCount");
         const showerDueRooms = new Set();
@@ -1613,7 +1929,6 @@
           currentShift: "day",
         };
         const novaState = { tasks: [], updatedAt: 0 };
-        const autopilotLog = [];
         const listIdByField = {
           iso: "isoList",
           n: "nList",
@@ -1928,6 +2243,10 @@
         }
 
         const persistState = () => {
+          if (!isLocalStorageAvailable()) {
+            handleError(new Error('LocalStorage unavailable'), 'Unable to save board state. Your browser may be in private mode or storage is disabled.', 'persistState');
+            return;
+          }
           try {
             const payload = {
               rooms,
@@ -1936,12 +2255,11 @@
               codeTeam,
               shiftInputs: carefusionData.shiftInputs,
               currentShift: carefusionData.currentShift,
-              autopilotLog,
               novaState,
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
           } catch (err) {
-            console.warn("Unable to save board state", err);
+            handleError(err, 'Unable to save board state. Data may be too large or storage quota exceeded.', 'persistState');
           }
         };
 
@@ -1969,6 +2287,9 @@
         };
 
         const persistSnapshot = () => {
+          if (!isLocalStorageAvailable()) {
+            return; // Silently fail for snapshots as they're not critical
+          }
           try {
             const snapshot = {
               rooms,
@@ -1977,11 +2298,15 @@
             };
             localStorage.setItem("novaSnapshot", JSON.stringify(snapshot));
           } catch (err) {
+            // Snapshot failures are non-critical, log but don't show user
             console.warn("Unable to save snapshot", err);
           }
         };
 
         function restoreState() {
+          if (!isLocalStorageAvailable()) {
+            return; // No saved state available
+          }
           try {
             const raw = localStorage.getItem(STORAGE_KEY);
             if (!raw) return;
@@ -2015,15 +2340,12 @@
             if (data.currentShift) {
               carefusionData.currentShift = data.currentShift;
             }
-            if (Array.isArray(data.autopilotLog)) {
-              autopilotLog.splice(0, autopilotLog.length, ...data.autopilotLog);
-            }
             if (data.novaState && Array.isArray(data.novaState.tasks)) {
               novaState.tasks = data.novaState.tasks;
               novaState.updatedAt = data.novaState.updatedAt || 0;
             }
           } catch (err) {
-            console.warn("Unable to restore board state", err);
+            handleError(err, 'Unable to restore saved board state. Starting with default data.', 'restoreState');
           }
           const hasValidRooms = rooms.some((r) => r && r.room);
           if (!rooms.length || !hasValidRooms) {
@@ -2032,17 +2354,22 @@
         }
 
         const hardResetState = () => {
+          if (isLocalStorageAvailable()) {
           try {
             localStorage.removeItem(STORAGE_KEY);
             localStorage.removeItem("novaSnapshot");
           } catch (err) {
-            console.warn("Unable to clear saved state", err);
+              handleError(err, 'Unable to clear saved state completely.', 'hardResetState');
+            }
           }
           hydrateRoomsDefault();
           selectedRoom = rooms[0]?.room || null;
           novaState.tasks = [];
           novaState.updatedAt = 0;
           renderTable();
+          if (typeof openFeedback === 'function') {
+            openFeedback('Board Reset', 'The board has been reset to default state.');
+          }
         };
 
         // Stats modal helpers
@@ -2120,11 +2447,22 @@
               .join("") || "<div class='muted'>No nurse assignments</div>";
           })();
 
+          const strainLabel = (metrics.staffingStrain || 1) >= 1.4 ? "High" : (metrics.staffingStrain || 1) >= 1.15 ? "Moderate" : "Balanced";
+          const busiest = metrics.busiest;
+          const onTimePct = activeRooms.length ? Math.round(((statusCounts.ok || 0) / activeRooms.length) * 100) : 0;
+
           target.innerHTML = `
-            <div style="margin-bottom:8px; line-height:1.6;">
+            <div style="margin-bottom:10px; line-height:1.6;">
               <strong>Total rooms:</strong> ${totalRooms} · <strong>Active patients:</strong> ${activeRooms.length}<br/>
               <strong>Rounding status:</strong> OK ${statusCounts.ok || 0} · Soon ${statusCounts.soon || 0} · Due ${statusCounts.due || 0} · Critical ${statusCounts.critical || 0}<br/>
               <strong>Avg NOVA need:</strong> ${metrics.avgNeed.toFixed(1)} · <strong>High fall-risk:</strong> ${highFall}
+            </div>
+            <div style="margin-bottom:10px; padding:8px; background:#f5f8ff; border:1px solid #dbe4f3; border-radius:8px; line-height:1.6;">
+              <div><strong>Unit pressure (need):</strong> ${metrics.avgNeed.toFixed(1)} / 100</div>
+              <div><strong>Patient stability (avg):</strong> ${(metrics.avgStability || 0).toFixed(1)} / 100</div>
+              <div><strong>Staffing strain:</strong> ${strainLabel} (ratio ${(metrics.staffingStrain || 1).toFixed(2)})</div>
+              ${busiest ? `<div><strong>Heaviest load:</strong> ${busiest.name} — ${busiest.patients} pts · load ${Math.round(busiest.load)}</div>` : ""}
+              <div><strong>On-time rounds:</strong> ${onTimePct}% · <strong>High-drift rooms:</strong> ${(statusCounts.critical || 0) + (statusCounts.due || 0)} · <strong>Silent saves:</strong> ${metrics.silentSaves || 0}</div>
             </div>
             <div style="margin-bottom:8px;">
               <div class="muted" style="margin-bottom:4px;">Nurse load summary:</div>
@@ -2933,6 +3271,10 @@
           if (feedbackTitle) feedbackTitle.textContent = title || "Notification";
           if (feedbackBody) feedbackBody.textContent = message || "";
           feedbackBackdrop.style.display = "flex";
+          // Focus the close button for accessibility
+          if (closeFeedbackBtn) {
+            setTimeout(() => closeFeedbackBtn.focus(), 100);
+          }
         };
         const closeFeedback = () => {
           feedbackBackdrop.style.display = "none";
@@ -2942,6 +3284,12 @@
         }
         feedbackBackdrop.addEventListener("click", (e) => {
           if (e.target === feedbackBackdrop) closeFeedback();
+        });
+        // Close feedback modal with Escape key
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && feedbackBackdrop.style.display === "flex") {
+            closeFeedback();
+          }
         });
 
         const renderCarefusion = () => {
@@ -3201,6 +3549,58 @@
           }
         };
 
+        let roundTooltipEl = null;
+        const hideRoundTooltip = () => {
+          if (!roundTooltipEl) return;
+          roundTooltipEl.classList.remove("visible");
+          roundTooltipEl.setAttribute("aria-hidden", "true");
+        };
+        const ensureRoundTooltip = () => {
+          if (roundTooltipEl) return roundTooltipEl;
+          roundTooltipEl = document.createElement("div");
+          roundTooltipEl.className = "round-tooltip-panel";
+          roundTooltipEl.setAttribute("aria-hidden", "true");
+          roundTooltipEl.innerHTML = `
+            <div class="round-tooltip-title"></div>
+            <div class="round-tooltip-progress round-progress"><div></div></div>
+            <div class="round-meta"></div>
+          `;
+          document.body.appendChild(roundTooltipEl);
+          window.addEventListener("scroll", hideRoundTooltip, true);
+          window.addEventListener("resize", hideRoundTooltip);
+          return roundTooltipEl;
+        };
+        const showRoundTooltip = (anchor, title, ratio, state, metaText) => {
+          const tooltip = ensureRoundTooltip();
+          const titleEl = tooltip.querySelector(".round-tooltip-title");
+          const progressEl = tooltip.querySelector(".round-tooltip-progress");
+          const fillEl = progressEl.querySelector("div");
+          const metaEl = tooltip.querySelector(".round-meta");
+          titleEl.textContent = title;
+          progressEl.className = "round-tooltip-progress round-progress" + (state !== "ok" ? ` ${state}` : "");
+          const visualRatio = Math.min(ratio, 1.2);
+          fillEl.style.width = `${Math.min(visualRatio, 1) * 100}%`;
+          metaEl.textContent = metaText;
+          tooltip.style.left = "0px";
+          tooltip.style.top = "0px";
+          tooltip.classList.add("visible");
+          tooltip.setAttribute("aria-hidden", "false");
+          const anchorRect = anchor.getBoundingClientRect();
+          const tooltipRect = tooltip.getBoundingClientRect();
+          let top = anchorRect.bottom + 8;
+          if (top + tooltipRect.height > window.innerHeight - 8) {
+            top = anchorRect.top - tooltipRect.height - 8;
+          }
+          let left = anchorRect.left;
+          if (left + tooltipRect.width > window.innerWidth - 8) {
+            left = window.innerWidth - tooltipRect.width - 8;
+          }
+          left = Math.max(8, left);
+          top = Math.max(8, top);
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        };
+
         const buildRoundingCell = (row) => {
           const td = document.createElement("td");
           td.className = "round";
@@ -3270,25 +3670,20 @@
             badge.appendChild(streak);
           }
 
-          const progress = document.createElement("div");
-          progress.className = "round-progress" + (state !== "ok" ? ` ${state}` : "");
-          const fill = document.createElement("div");
-          const visualRatio = Math.min(ratio, 1.2);
-          fill.style.width = `${Math.min(visualRatio, 1) * 100}%`;
-          progress.appendChild(fill);
-
-          const meta = document.createElement("div");
-          meta.className = "round-meta";
           const last3 = hist.slice(-3).map((h) => new Date(h.ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })).join(" · ") || "—";
           const lastGap =
             hist.length >= 2
               ? Math.round((hist[hist.length - 1].ts - hist[hist.length - 2].ts) / 60000) + "m gap"
               : "—";
-          meta.textContent = `${interval}m window · drift ${(ratio * 100).toFixed(0)}% · last: ${last3} · gap: ${lastGap}`;
+          const metaText = `${interval}m window · drift ${(ratio * 100).toFixed(0)}% · last: ${last3} · gap: ${lastGap}`;
+
+          const tooltipTitle = `${badgeText} • ${label}`;
+          container.addEventListener("mouseenter", () => {
+            showRoundTooltip(container, tooltipTitle, ratio, state, metaText);
+          });
+          container.addEventListener("mouseleave", hideRoundTooltip);
 
           container.appendChild(badge);
-          container.appendChild(progress);
-          container.appendChild(meta);
           const startActive = row.justAdmittedAt && Date.now() - row.justAdmittedAt < 3 * 60 * 1000;
           if (startActive) {
             const startTag = document.createElement("span");
@@ -3301,80 +3696,6 @@
         };
 
         // Render NOVA quality panel
-        const renderNovaQualityBox = () => {
-          const target = document.getElementById("novaQualityBody");
-          if (!target) return;
-
-          NOVA_ENGINE.updateAll(rooms);
-          const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
-
-          const { ok, soon, due, critical } = metrics.statusCounts;
-          const activeCount = rooms.filter((r) => r.patient).length || 0;
-
-          const strainLabel =
-            metrics.staffingStrain >= 1.4
-              ? "High"
-              : metrics.staffingStrain >= 1.15
-              ? "Moderate"
-              : "Balanced";
-
-          const busiest = metrics.busiest;
-
-          const statusLine = activeCount
-            ? `OK: ${ok} · Soon: ${soon} · Due: ${due} · Critical: ${critical}`
-            : "No active patients.";
-
-          const busiestHtml = busiest
-            ? `<div>Heaviest load: <strong>${busiest.name}</strong> — ${busiest.patients} pts · load ${Math.round(
-                busiest.load
-              )}</div>`
-            : "<div>Heaviest load: <strong>N/A</strong></div>";
-
-          target.innerHTML = `
-            <div><strong>Unit pressure (need):</strong> ${metrics.avgNeed.toFixed(
-              1
-            )} / 100</div>
-            <div><strong>Patient stability (avg):</strong> ${metrics.avgStability.toFixed(
-              1
-            )} / 100</div>
-            <div style="margin-top:4px;">${statusLine}</div>
-            <div style="margin-top:4px;">
-              <strong>Staffing strain:</strong> ${strainLabel} (ratio ${metrics.staffingStrain
-                .toFixed(2)
-                .toString()})
-            </div>
-            ${busiestHtml}
-            <div style="margin-top:6px; font-size:11px; color:#6b7a93;">
-              Care Quality Ledger™ snapshot: % on-time rounds = ${
-                activeCount ? Math.round((ok / activeCount) * 100) : 0
-              }%. High-drift rooms = ${critical + due}.
-              Silent saves: ${metrics.silentSaves || 0} (likely alarms avoided). NOVA flags drift and risk visually so fewer audible alarms are needed.
-            </div>
-          `;
-        };
-
-        const renderReliabilityStrip = () => {
-          if (!reliabilityStrip) return;
-          NOVA_ENGINE.updateAll(rooms);
-          const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
-          const onTimePct = Math.round((metrics.onTimePct || 0) * 100);
-          const leader = rooms
-            .filter((r) => r.patient)
-            .sort((a, b) => (b.roundReliabilityStreak || 0) - (a.roundReliabilityStreak || 0))[0];
-          const leaderText =
-            leader && leader.roundReliabilityStreak
-              ? `Longest consistency streak: Room ${leader.room} (${leader.roundReliabilityStreak} on-time rounds)`
-              : "Longest consistency streak: —";
-          const debt = metrics.careDebt || 0;
-          const debtLabel = `Care debt: ${debt.toFixed(1)} equivalent overdue rounds`;
-          reliabilityStrip.innerHTML = `
-            <div><strong>On-time rounds this shift:</strong> ${onTimePct}%</div>
-            <div><strong>${leaderText}</strong></div>
-            <div><strong>${debtLabel}</strong> (focus here)</div>
-            <div><strong>Silent saves:</strong> ${metrics.silentSaves || 0} likely alarms avoided</div>
-            <div class="mini-bar" aria-hidden="true"><div style="width:${onTimePct}%;"></div></div>
-          `;
-        };
 
         const renderStaffFairness = () => {
           if (!staffFairnessBody) return;
@@ -3417,53 +3738,55 @@
           `;
         };
 
-        const renderNovaRadar = () => {
-          if (!novaRadarBody) return;
-          NOVA_ENGINE.updateAll(rooms);
-          const radar = NOVA_ENGINE.computeRadar(rooms);
-          const entries = [
-            { key: "falls", label: "Falls" },
-            { key: "mobility", label: "Mobility" },
-            { key: "toileting", label: "Toileting" },
-            { key: "comfort", label: "Comfort" },
-          ];
-          const dominant = entries.slice().sort((a, b) => (radar[b.key] || 0) - (radar[a.key] || 0))[0];
-          const body = entries
-            .map(
-              (e) => `
-                <div class="radar-line">
-                  <span class="radar-label">${e.label}</span>
-                  <div class="mini-bar" style="flex:1;"><div style="width:${radar[e.key] || 0}%;"></div></div>
-                  <span>${radar[e.key] || 0} / 100</span>
-                </div>
-              `
-            )
-            .join("");
-          novaRadarBody.innerHTML = `
-            ${body}
-            <div style="margin-top:6px; color:#47566f;">Today's dominant pressure: ${dominant ? dominant.label : "None"}</div>
-          `;
-        };
-
-        // Dynamically scale board to fit viewport and rows
+        // Fit table rows to the visible board height
         const autoScaleBoard = (countOverride) => {
           const visibleRows =
             typeof countOverride === "number" && !Number.isNaN(countOverride)
               ? countOverride
               : rooms.length;
-          const approxRowHeight = 24; // slightly conservative to keep all rows in view
-          const headerHeight = 120; // toolbar + summary + margins
-          const sidebarHeight = 80; // padding allowance
-          const targetHeight = visibleRows * approxRowHeight + headerHeight + sidebarHeight;
-          const viewport = window.innerHeight || 800;
-          const scale = Math.min(1, viewport / targetHeight);
-          const scaled = scale.toFixed(3);
-          document.documentElement.style.setProperty("--board-scale", scaled);
+          document.documentElement.style.setProperty("--board-scale", "1");
           const main = document.querySelector(".main");
           if (main) {
-            main.style.height = "calc(100vh - 8px)";
+            main.style.height = "calc(100vh - 4px)";
             main.style.minHeight = main.style.height;
           }
+          const applyRowHeight = (value) => {
+            if (!Number.isFinite(value) || value <= 0) return;
+            document.documentElement.style.setProperty("--row-height", `${value}px`);
+          };
+          window.requestAnimationFrame(() => {
+            const tableWrap = document.querySelector(".table-wrap");
+            const table = tableWrap?.querySelector(".bed-table");
+            const thead = table?.querySelector("thead");
+            if (!tableWrap || !table || !thead) return;
+            const blocks = tableWrap.querySelectorAll(
+              ".table-actions, .table-controls, .table-summary"
+            );
+            let used = 0;
+            blocks.forEach((el) => {
+              const rect = el.getBoundingClientRect();
+              const styles = window.getComputedStyle(el);
+              used += rect.height;
+              used += parseFloat(styles.marginTop || "0") + parseFloat(styles.marginBottom || "0");
+            });
+            const wrapStyles = window.getComputedStyle(tableWrap);
+            used += parseFloat(wrapStyles.paddingTop || "0") + parseFloat(wrapStyles.paddingBottom || "0");
+            const headHeight = thead.getBoundingClientRect().height;
+            const available = Math.max(0, tableWrap.clientHeight - used - headHeight);
+            const rowCount = Math.max(1, visibleRows || 0);
+            const borderAllowance = rowCount + 1; // collapsed borders between rows
+            const safeAvailable = Math.max(0, available - borderAllowance - 2);
+            let rowHeight = Math.floor(safeAvailable / rowCount);
+            applyRowHeight(rowHeight);
+            window.requestAnimationFrame(() => {
+              const overflow = tableWrap.scrollHeight - tableWrap.clientHeight;
+              if (overflow > 0) {
+                const adjust = Math.ceil((overflow + 2) / rowCount);
+                rowHeight = Math.max(12, rowHeight - adjust);
+                applyRowHeight(rowHeight);
+              }
+            });
+          });
         };
 
         const hasActiveIsolation = (row) => {
@@ -3570,6 +3893,10 @@
               pill.className = "alert-pill";
               pill.textContent = "🛁";
               wrap.appendChild(pill);
+            } else {
+              const spacer = document.createElement("span");
+              spacer.className = "alert-placeholder";
+              wrap.appendChild(spacer);
             }
             td.appendChild(wrap);
           } else {
@@ -3635,10 +3962,7 @@
           fragment.appendChild(tr);
         });
           bedBody.appendChild(fragment);
-          renderNovaQualityBox();
-          renderReliabilityStrip();
           renderStaffFairness();
-          renderNovaRadar();
           renderToiletingPriority();
           renderShowerAlertBar();
           updateNovaTasks();
@@ -3654,13 +3978,21 @@
                 : metrics.staffingStrain >= 1.15
                 ? "Moderate"
                 : "Balanced";
+            // Safe HTML rendering for summary (numbers only, no user input)
+            if (tableSummary) {
+              const due = sanitizeHTML(String(metrics.statusCounts.due));
+              const critical = sanitizeHTML(String(metrics.statusCounts.critical));
+              const avgNeed = sanitizeHTML(metrics.avgNeed.toFixed(1));
+              const strainLabelSafe = sanitizeHTML(strainLabel);
+              const careDebt = sanitizeHTML(metrics.careDebt.toFixed(1));
             tableSummary.innerHTML = `
-              <span><strong>Due:</strong> ${metrics.statusCounts.due}</span>
-              <span><strong>Critical:</strong> ${metrics.statusCounts.critical}</span>
-              <span><strong>Avg need:</strong> ${metrics.avgNeed.toFixed(1)}</span>
-              <span><strong>Staffing strain:</strong> ${strainLabel}</span>
-              <span><strong>Care debt:</strong> ${metrics.careDebt.toFixed(1)}</span>
-            `;
+                <span><strong>Due:</strong> ${due}</span>
+                <span><strong>Critical:</strong> ${critical}</span>
+                <span><strong>Avg need:</strong> ${avgNeed}</span>
+                <span><strong>Staffing strain:</strong> ${strainLabelSafe}</span>
+                <span><strong>Care debt:</strong> ${careDebt}</span>
+              `;
+            }
           }
         };
 
@@ -3708,7 +4040,9 @@
           persistState();
         };
 
-        bedBody.addEventListener("input", handleTableEdit);
+        // Debounced version for input events (performance optimization)
+        const debouncedHandleTableEdit = debounce(handleTableEdit, 300);
+        bedBody.addEventListener("input", debouncedHandleTableEdit);
         bedBody.addEventListener("change", handleTableEdit);
         const completeRound = (roomNum) => {
           const row = rooms.find((r) => r.room === roomNum);
@@ -3943,241 +4277,6 @@
           if (e.target === assignmentBackdrop) assignmentBackdrop.style.display = "none";
         });
 
-        // Storyline modal
-        const storylineBackdrop = document.createElement("div");
-        storylineBackdrop.className = "modal-backdrop";
-        storylineBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true">
-            <div id="storyline-card"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="closeStoryline">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(storylineBackdrop);
-        const closeStorylineBtn = storylineBackdrop.querySelector("#closeStoryline");
-        storylineBtn.addEventListener("click", () => {
-          storylineBackdrop.style.display = "flex";
-          renderStorylineCard();
-        });
-        closeStorylineBtn.addEventListener("click", () => {
-          storylineBackdrop.style.display = "none";
-        });
-        storylineBackdrop.addEventListener("click", (e) => {
-          if (e.target === storylineBackdrop) storylineBackdrop.style.display = "none";
-        });
-
-        // Storyline logic
-        const computeRoundingRhythm = (events) => {
-          if (!events || events.length < 2) return "—";
-          const intervals = [];
-          for (let i = 0; i < events.length - 1; i++) {
-            intervals.push(Math.abs(events[i] - events[i + 1]));
-          }
-          const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-          return avg.toFixed(1) + " hrs";
-        };
-
-        const computePatternScore = (arr) => arr.reduce((a, b) => a + b, 0);
-
-        const computeComfortTrend = (scores) => {
-          if (!scores.length) return { trend: "stable", avg: "—" };
-          const diff = scores[scores.length - 1] - scores[0];
-          const trend = diff > 0 ? "improving" : diff < 0 ? "declining" : "stable";
-          const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
-          return { trend, avg };
-        };
-
-        const predictNextShiftNeeds = (patient) => {
-          const mobility = computePatternScore(patient.mobilityEvents);
-          const restroom = computePatternScore(patient.restroomEvents);
-          const comfort = computeComfortTrend(patient.comfortScores);
-          const roundingRhythm = parseFloat(computeRoundingRhythm(patient.roundingEvents)) || 0;
-          const predictions = [];
-
-          if (mobility > 8) {
-            predictions.push({ msg: "Increased mobility checks likely required.", level: "medium" });
-          } else if (mobility > 12) {
-            predictions.push({ msg: "High mobility pattern — fall-prevention emphasis needed.", level: "high" });
-          }
-          if (restroom > 3) {
-            predictions.push({ msg: "Higher frequency toileting expected.", level: "medium" });
-          }
-          if (comfort.trend === "declining") {
-            predictions.push({ msg: "Comfort trending down — proactive comfort rounding recommended.", level: "high" });
-          }
-          if (roundingRhythm > 3) {
-            predictions.push({ msg: "Irregular rounding rhythm — consider tighter rounding windows.", level: "medium" });
-          }
-          if (!predictions.length) {
-            predictions.push({ msg: "No major needs predicted — maintain standard rounding rhythm.", level: "low" });
-          }
-          return predictions;
-        };
-
-        const buildStoryData = () => {
-          NOVA_ENGINE.updateAll(rooms);
-          const row = rooms.find((r) => r.room === selectedRoom) || rooms[0];
-          const now = Date.now();
-          const lastRounded = row.lastRoundedAt || now;
-          const minutesAgo = row.roundedAgo || Math.round((now - lastRounded) / 60000);
-          const intervalMin = row.roundInterval || 60;
-          const roundingEvents = (row.roundingHistory || [])
-            .map((h) => -Math.max(0, Math.round((now - (h.ts || h)) / 3600000)))
-            .sort((a, b) => b - a)
-            .slice(0, 5);
-          if (!roundingEvents.length) {
-            for (let i = 0; i < 5; i++) {
-              roundingEvents.push(-((minutesAgo + intervalMin * i) / 60));
-            }
-          }
-          const assistText = (row.assist || "").toLowerCase();
-          const mobilityScore =
-            assistText.includes("lift") || assistText.includes("wheel")
-              ? 5
-              : assistText.includes("assist")
-              ? 3
-              : 1;
-          const restroomScore = row.t && row.t.toLowerCase().includes("br") ? 3 : 1;
-          const comfortScores = [3, 4, 3, 4, 2, 3];
-
-          const matchByRoom = (list) =>
-            list.find((x) => `${x.room}`.trim() === `${row.room}`.trim() && (x.time || x.pickup));
-
-          const appt = matchByRoom(appointments || []);
-          const shower = matchByRoom(showers || []);
-
-            return {
-              name: row.patient || "Patient",
-              room: row.room,
-              nurse: row.nurse || "—",
-              cna: row.cna || "—",
-            iso: row.iso || "",
-            assist: row.assist || "",
-            fall: row.fall || "",
-            diet: row.diet || "",
-            sp: row.sp || "",
-            trajectory: row.novaTrajectory || "stable",
-            novaNeed: row.novaNeedScore || 0,
-              novaPriority: row.novaPriorityScore || 0,
-              driftPct: Math.round((row.roundDrift || 0) * 100),
-              roundReliabilityStreak: row.roundReliabilityStreak || 0,
-              appt,
-              shower,
-            last24hrContacts: [
-              { type: "rounding", time: -Math.max(1, Math.round(minutesAgo / 60) || 1) },
-              { type: "rounding", time: -Math.max(2, Math.round(minutesAgo / 60) + 2) },
-              { type: "cna check", time: -4 },
-              { type: "restroom", time: -6 },
-              { type: "mobility", time: -7 },
-              { type: "comfort", time: -8 },
-              { type: "incidentPrevented", time: -10, detail: "Fall prevented" },
-            ],
-            mobilityEvents: [mobilityScore, mobilityScore + 1, mobilityScore, mobilityScore + 2, mobilityScore + 1, mobilityScore],
-            restroomEvents: [restroomScore, restroomScore + 1, restroomScore, restroomScore, restroomScore, restroomScore],
-            comfortScores,
-            roundingEvents,
-            safetyPreventions: 2,
-          };
-        };
-
-        const renderStorylineCard = () => {
-          const data = buildStoryData();
-          const container = storylineBackdrop.querySelector("#storyline-card");
-          if (!container) return;
-
-          const roundingRhythm = computeRoundingRhythm(data.roundingEvents);
-          const mobilityTotal = computePatternScore(data.mobilityEvents);
-          const restroomTotal = computePatternScore(data.restroomEvents);
-          const comfort = computeComfortTrend(data.comfortScores);
-          const predictions = predictNextShiftNeeds(data);
-
-          const metaChips = [
-            data.iso ? `<span class="sl-badge medium">${data.iso}</span>` : "",
-            data.assist ? `<span class="sl-badge medium">${data.assist}</span>` : "",
-            data.fall ? `<span class="sl-badge high">Fall ${data.fall}</span>` : "",
-            data.diet ? `<span class="sl-badge low">${data.diet}</span>` : "",
-            data.sp ? `<span class="sl-badge low">${data.sp}</span>` : "",
-          ]
-            .filter(Boolean)
-            .join(" ");
-
-          const apptRow = data.appt
-            ? `<div class="sl-item">Appointment: <strong>${data.appt.time || "TBD"}</strong> · Pickup: ${data.appt.pickup || "—"}</div>`
-            : "";
-          const showerRow = data.shower
-            ? `<div class="sl-item">Shower: <strong>${data.shower.time || "TBD"}</strong> · Pickup: ${data.shower.pickup || "—"}</div>`
-            : "";
-
-          container.innerHTML = `
-            <div class="sl-title">Patient Storyline Card™</div>
-            <div class="sl-sub">Dynamic snapshot of patient trends and predictive needs for handoff.</div>
-
-            <div class="sl-section">
-              <h3>Patient & Team</h3>
-              <div class="sl-item">Room <strong>${data.room}</strong> · Patient: <strong>${data.name}</strong></div>
-              <div class="sl-item">Nurse: <strong>${data.nurse}</strong> · CNA: <strong>${data.cna}</strong></div>
-              ${metaChips ? `<div class="sl-item">${metaChips}</div>` : ""}
-            </div>
-
-            <div class="sl-section">
-              <h3>NOVA Trajectory</h3>
-              <div class="sl-item">Trajectory: <strong>${data.trajectory}</strong> · Need ${Math.round(data.novaNeed)}/100 · Priority ${Math.round(data.novaPriority)}</div>
-              <div class="sl-item">Rounding drift: <strong>${data.driftPct}%</strong> · Suggest: ${
-                data.driftPct > 110 ? "tighten rounds this hour" : "maintain current cadence"
-              }</div>
-            </div>
-
-            <div class="sl-section">
-              <h3>Last 24 Hours of Contacts</h3>
-              ${data.last24hrContacts
-                .map(
-                  (c) =>
-                    `<div class="sl-item">• ${c.type} — ${Math.abs(c.time)} hrs ago ${
-                      c.detail ? `(${c.detail})` : ""
-                    }</div>`
-                )
-                .join("")}
-            </div>
-
-            <div class="sl-section">
-              <h3>Rounding Rhythm</h3>
-              <div class="sl-item">Average interval: <strong>${roundingRhythm}</strong></div>
-              <div class="sl-item">Streak: <strong>${data.roundReliabilityStreak || 0}</strong> on-time rounds</div>
-            </div>
-
-            <div class="sl-section">
-              <h3>Mobility & Restroom Patterns</h3>
-              <div class="sl-item">Mobility activity (last shift): <strong>${mobilityTotal}</strong></div>
-              <div class="sl-item">Restroom events: <strong>${restroomTotal}</strong></div>
-            </div>
-
-            <div class="sl-section">
-              <h3>Safety Incidents Prevented</h3>
-              <div class="sl-item"><strong>${data.safetyPreventions}</strong> incidents prevented</div>
-            </div>
-
-            <div class="sl-section">
-              <h3>Comfort Trends</h3>
-              <div class="sl-item">Trend: <strong>${comfort.trend}</strong> · Avg score: <strong>${comfort.avg}/5</strong></div>
-            </div>
-
-            <div class="sl-section">
-              <h3>Predicted Needs for Next Shift</h3>
-              ${predictions
-                .map(
-                  (p) =>
-                    `<div class="sl-item">
-                      <span class="sl-badge ${p.level}">${p.level.toUpperCase()}</span>
-                      ${p.msg}
-                    </div>`
-                )
-                .join("")}
-            </div>
-
-            ${apptRow || showerRow ? `<div class="sl-section"><h3>Upcoming</h3>${apptRow}${showerRow}</div>` : ""}
-          `;
-        };
 
         // NOVA overview modal
         const novaBackdrop = document.createElement("div");
@@ -4223,13 +4322,7 @@
                   </ul>
                 </div>
                 <div class="nova-card">
-                  <h4>6) Patient Storyline Card™</h4>
-                  <ul>
-                    <li>24h contacts, rhythm, mobility/restroom, safety, comfort, predictions</li>
-                  </ul>
-                </div>
-                <div class="nova-card">
-                  <h4>7) Care Quality Ledger™</h4>
+                  <h4>6) Care Quality Ledger™</h4>
                   <ul>
                     <li>Risk reduction, reliability, fall prevention wins</li>
                     <li>Staffing patterns, predictive accuracy, recommended workflow changes</li>
@@ -4254,30 +4347,6 @@
           if (e.target === novaBackdrop) novaBackdrop.style.display = "none";
         });
 
-        // NOVA quality modal
-        const novaMetricsBackdrop = document.createElement("div");
-        novaMetricsBackdrop.className = "modal-backdrop";
-        novaMetricsBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true">
-            <h3>NOVA – Team & Quality</h3>
-            <div id="novaQualityBody" style="font-size: 12px; line-height: 1.5; color: #10356b"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="closeNovaMetrics">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(novaMetricsBackdrop);
-        const closeNovaMetricsBtn = novaMetricsBackdrop.querySelector("#closeNovaMetrics");
-        novaMetricsBtn.addEventListener("click", () => {
-          novaMetricsBackdrop.style.display = "flex";
-          renderNovaQualityBox();
-        });
-        closeNovaMetricsBtn.addEventListener("click", () => {
-          novaMetricsBackdrop.style.display = "none";
-        });
-        novaMetricsBackdrop.addEventListener("click", (e) => {
-          if (e.target === novaMetricsBackdrop) novaMetricsBackdrop.style.display = "none";
-        });
 
         // On-time rounds modal
         const onTimeBackdrop = document.createElement("div");
@@ -4354,12 +4423,14 @@
             <h3>NOVA FallWatch™</h3>
             <div id="fallsBody" style="font-size:12px; line-height:1.6; color:#10356b; max-height:70vh; overflow:auto;"></div>
             <div class="actions">
+              <button type="button" class="action-btn" id="printFallHotspots">Print fall hotspots</button>
               <button type="button" class="action-btn secondary" id="closeFalls">Close</button>
             </div>
           </div>
         `;
         document.body.appendChild(fallsBackdrop);
         const closeFallsBtn = fallsBackdrop.querySelector("#closeFalls");
+        const printFallsBtn = fallsBackdrop.querySelector("#printFallHotspots");
         const fallsBody = fallsBackdrop.querySelector("#fallsBody");
 
         const computeFallAnalytics = () => {
@@ -4376,6 +4447,7 @@
             isoHigh: [],
             pressureScore: 0,
             hotspots: [],
+            hotspotsAll: [],
             focus: [],
           };
 
@@ -4430,9 +4502,10 @@
           const pressurePct = Math.min(100, Math.round((result.pressureScore / maxPossible) * 100));
           result.pressure = pressurePct;
 
-          result.hotspots = result.hotspots
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 5);
+          result.hotspotsAll = result.hotspots
+            .slice()
+            .sort((a, b) => b.score - a.score);
+          result.hotspots = result.hotspotsAll.slice(0, 5);
 
           // Next hour focus: pick top 3 with overdue/soon and high risk
           result.focus = result.hotspots
@@ -4581,6 +4654,112 @@
           `;
         };
 
+        const openFallHotspotsPrint = (data) => {
+          const now = new Date();
+          const stamp = now.toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+          let hotspotRows = (data.hotspotsAll || data.hotspots || []).length
+            ? (data.hotspotsAll || data.hotspots || [])
+            : [];
+          if (!hotspotRows.length) {
+            const scoreRow = (row, assistLevel, state) => {
+              const fallLevel = classifyFallLevel(row);
+              const notes = (row.n || row.notes || "").toLowerCase();
+              let score = 0;
+              if (fallLevel === "high") score += 40;
+              else if (fallLevel === "moderate") score += 22;
+              if (assistLevel === "lift") score += 15;
+              else if (assistLevel === "wheelchair") score += 10;
+              else if (assistLevel === "assist") score += 6;
+              if (state === "critical") score += 18;
+              else if (state === "due") score += 12;
+              else if (state === "soon") score += 6;
+              if (notes.includes("restroom") || notes.includes("toilet") || notes.includes("bathroom")) score += 6;
+              if (notes.includes("confused") || notes.includes("dizzy") || notes.includes("unsteady")) score += 8;
+              return score;
+            };
+            hotspotRows = rooms
+              .filter((r) => r && r.room)
+              .map((r) => {
+                const assistLevel = classifyAssistLevel(r);
+                const state = r.roundState || "ok";
+                return {
+                  room: r.room,
+                  patient: r.patient,
+                  fall: r.fall,
+                  assist: assistLevel,
+                  state,
+                  score: scoreRow(r, assistLevel, state),
+                };
+              })
+              .sort((a, b) => (b.score || 0) - (a.score || 0));
+          }
+          const rows =
+            hotspotRows.length === 0
+              ? `<tr><td colspan="6">No hotspots detected.</td></tr>`
+              : hotspotRows
+                  .map(
+                    (h) => `
+                      <tr>
+                        <td>Room ${h.room ?? "—"}</td>
+                        <td>${privacyMasked ? "Protected" : h.patient || "—"}</td>
+                        <td>${h.fall || "Risk"}</td>
+                        <td>${h.assist}</td>
+                        <td>${h.state || "ok"}</td>
+                        <td>${Math.round(h.score || 0)}</td>
+                      </tr>
+                    `
+                  )
+                  .join("");
+
+          const win = window.open("", "_blank", "width=900,height=700");
+          if (!win) return;
+          win.document.write(`
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="utf-8" />
+                <title>Fall Hotspots</title>
+                <style>
+                  body { font-family: "Inter", Arial, sans-serif; color: #0f2742; padding: 24px; }
+                  h1 { margin: 0 0 4px; font-size: 22px; }
+                  .meta { color: #5b6b7a; font-size: 12px; margin-bottom: 16px; }
+                  .actions { margin: 10px 0 16px; }
+                  .btn { background: #1b6fd9; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+                  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                  th, td { border: 1px solid #dbe5f0; padding: 8px; text-align: left; }
+                  th { background: #eef4ff; color: #0d3b73; }
+                  @media print { .actions { display: none; } }
+                </style>
+              </head>
+              <body>
+                <h1>NOVA Fall Hotspots</h1>
+                <div class="meta">Generated ${stamp}</div>
+                <div class="actions"><button class="btn" id="printBtn">Print</button></div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Room</th>
+                      <th>Patient</th>
+                      <th>Risk</th>
+                      <th>Assist</th>
+                      <th>Rounding</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rows}
+                  </tbody>
+                </table>
+                <scr` + `ipt>
+                  document.getElementById("printBtn").addEventListener("click", () => window.print());
+                </scr` + `ipt>
+              </body>
+            </html>
+          `);
+          win.document.close();
+          win.focus();
+        };
+
         // More dropdown toggle
         if (moreActionsBtn && moreMenu) {
         moreActionsBtn.addEventListener("click", () => {
@@ -4602,6 +4781,13 @@
           if (closeFallsBtn) {
             closeFallsBtn.addEventListener("click", () => {
               fallsBackdrop.style.display = "none";
+            });
+          }
+          if (printFallsBtn) {
+            printFallsBtn.addEventListener("click", () => {
+              NOVA_ENGINE.updateAll(rooms);
+              const data = computeFallAnalytics();
+              openFallHotspotsPrint(data);
             });
           }
           fallsBackdrop.addEventListener("click", (e) => {
@@ -4993,84 +5179,7 @@
           `;
         };
 
-        // Autopilot modal
-        const autopilotBackdrop = document.createElement("div");
-        autopilotBackdrop.className = "modal-backdrop";
-        autopilotBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true" style="width:min(840px, 92vw);">
-            <h3>NOVA Autopilot – Dispatch</h3>
-            <div id="autopilotBody" style="max-height:70vh; overflow:auto; font-size:12px; color:#10356b; line-height:1.6;"></div>
-            <div id="autopilotEmailPreview" style="margin-top:8px; padding:8px; border:1px solid #dbe4f3; border-radius:8px; background:#f7faff; font-size:11px; color:#10356b; display:none;"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="emailAutopilot">Email dispatch</button>
-              <button type="button" class="action-btn secondary" id="textAutopilot">Text dispatch</button>
-              <button type="button" class="action-btn" id="dispatchAutopilot">Dispatch now</button>
-              <button type="button" class="action-btn secondary" id="closeAutopilot">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(autopilotBackdrop);
-        const autopilotBody = autopilotBackdrop.querySelector("#autopilotBody");
-        const autopilotEmailPreview = autopilotBackdrop.querySelector("#autopilotEmailPreview");
-        const closeAutopilotBtn = autopilotBackdrop.querySelector("#closeAutopilot");
-        const emailAutopilotBtn = autopilotBackdrop.querySelector("#emailAutopilot");
-        const textAutopilotBtn = autopilotBackdrop.querySelector("#textAutopilot");
-        const dispatchAutopilotBtn = autopilotBackdrop.querySelector("#dispatchAutopilot");
 
-        // Digital Twin modal
-        const twinBackdrop = document.createElement("div");
-        twinBackdrop.className = "modal-backdrop";
-        twinBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true" style="width:min(840px,92vw);">
-            <h3>NOVA Digital Twin – Simulation</h3>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-bottom:10px;" id="twinControls">
-              <label>RN count
-                <input type="number" min="0" id="twinRn" class="cell-input" />
-              </label>
-              <label>CNA count
-                <input type="number" min="0" id="twinCna" class="cell-input" />
-              </label>
-              <label>Rounding interval target (minutes)
-                <input type="number" min="30" step="15" id="twinInterval" class="cell-input" />
-              </label>
-              <label>Extra high-risk patients
-                <input type="number" min="0" step="1" id="twinHighRisk" class="cell-input" />
-              </label>
-            </div>
-            <div class="info-note" style="margin:0 0 8px;">
-              Simulate “what if” changes to staffing, acuity, and rounding cadence. Estimates care debt, strain, fall exposure, and reliability impact.
-            </div>
-            <div id="twinBody" style="max-height:60vh; overflow:auto; font-size:12px; color:#10356b; line-height:1.5;"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="closeTwin">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(twinBackdrop);
-        const twinBody = twinBackdrop.querySelector("#twinBody");
-        const twinRn = twinBackdrop.querySelector("#twinRn");
-        const twinCna = twinBackdrop.querySelector("#twinCna");
-        const twinInterval = twinBackdrop.querySelector("#twinInterval");
-        const twinHighRisk = twinBackdrop.querySelector("#twinHighRisk");
-        const closeTwinBtn = twinBackdrop.querySelector("#closeTwin");
-
-        // NOVA Copilot modal
-        const copilotBackdrop = document.createElement("div");
-        copilotBackdrop.className = "modal-backdrop";
-        copilotBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true" style="width:min(720px,90vw);">
-            <h3>NOVA Copilot – Documentation & Handoff</h3>
-            <div id="copilotBody" style="max-height:70vh; overflow:auto; font-size:12px; color:#10356b; line-height:1.6;"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="copyCopilot">Copy text</button>
-              <button type="button" class="action-btn secondary" id="closeCopilot">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(copilotBackdrop);
-        const copilotBody = copilotBackdrop.querySelector("#copilotBody");
-        const copyCopilotBtn = copilotBackdrop.querySelector("#copyCopilot");
-        const closeCopilotBtn = copilotBackdrop.querySelector("#closeCopilot");
         // Playbook modal
         const playbookBackdrop = document.createElement("div");
         playbookBackdrop.className = "modal-backdrop";
@@ -5087,94 +5196,6 @@
         const playbookBody = playbookBackdrop.querySelector("#playbookBody");
         const closePlaybookBtn = playbookBackdrop.querySelector("#closePlaybook");
 
-        const buildAutopilotTasks = () => {
-          NOVA_ENGINE.updateAll(rooms);
-          const metrics = NOVA_ENGINE.computeUnitMetrics(rooms);
-          const staffStats = metrics.staffStats || {};
-          const staffPool = Object.entries(staffStats).map(([name, v]) => ({
-            name,
-            load: v.load || 0,
-            patients: v.patients || 0,
-            highRiskCount: v.highRiskCount || 0,
-            fatigue: v.fatigueScore || 0,
-          }));
-          const pickStaff = () => {
-            if (!staffPool.length) return "Unassigned";
-            const ranked = staffPool
-              .map((s) => ({
-                ...s,
-                score: (s.load || 0) + (s.fatigue || 0) * 0.8 + (s.highRiskCount || 0) * 3 + (s.patients || 0) * 2,
-              }))
-              .sort((a, b) => a.score - b.score);
-            return ranked[0]?.name || "Unassigned";
-          };
-          const actionText = (row) => {
-            const fallLevel = classifyFallLevel(row);
-            if (row.roundState === "critical" || row.roundState === "due") return "Immediate safety + rounding";
-            if (fallLevel === "high") return "Fall safety + toileting check";
-            if ((row.novaMobilityScore || 0) >= 70) return "Mobility with assist/lift";
-            if ((row.novaToiletScore || 0) >= 60) return "Toileting cadence";
-            if ((row.novaComfortScore || 0) >= 60) return "Comfort/pain check";
-            return "Quick check-in";
-          };
-
-          const prioritized = rooms
-            .filter((r) => r.patient)
-            .sort((a, b) => (b.novaPriorityScore || 0) - (a.novaPriorityScore || 0))
-            .slice(0, 8);
-          const tasks = prioritized.map((r) => ({
-            room: r.room,
-            patient: privacyMasked ? "Protected" : r.patient || "—",
-            action: actionText(r),
-            drift: Math.round((r.roundDrift || 0) * 100),
-            risk: `${r.fall || ""} ${r.assist || ""}`.trim(),
-            staff: pickStaff(),
-          }));
-          const prevented = tasks.filter((t) => {
-            const row = prioritized.find((r) => r.room === t.room);
-            return row && (row.roundState === "due" || row.roundState === "critical");
-          }).length;
-          return { tasks, metrics, prevented };
-        };
-
-        const buildCopilotContent = () => {
-          NOVA_ENGINE.updateAll(rooms);
-          const row = rooms.find((r) => r.room === selectedRoom) || rooms.find((r) => r.patient) || rooms[0];
-          if (!row) return null;
-          const notes = (row.n || "").toLowerCase();
-          const fallLevel = classifyFallLevel(row);
-          const rhythm =
-            row.roundReliabilityStreak && row.roundReliabilityStreak >= 3
-              ? "on time"
-              : row.roundDrift > 1
-              ? "drifting"
-              : "steady";
-          const comfortTrend =
-            (row.novaComfortScore || 0) >= 70 ? "worse" : (row.novaComfortScore || 0) <= 30 ? "improving" : "stable";
-          const mobilityNeed = row.assist || "standard";
-          const toiletNeed = row.novaToiletScore >= 60 ? "frequent toileting" : "standard toileting";
-          const riskSummary = [
-            fallLevel === "high" ? "high fall risk" : fallLevel === "moderate" ? "moderate fall risk" : "",
-            row.assist ? row.assist : "",
-            row.iso ? `iso ${row.iso}` : "",
-          ]
-            .filter(Boolean)
-            .join(", ");
-          const predicted =
-            row.novaMobilityScore >= 70
-              ? "Expect mobility assist with lift"
-              : row.novaToiletScore >= 60
-              ? "Expect toileting every 60–90 minutes"
-              : "Standard cadence expected";
-          const handoff = [
-            `Situation: ${riskSummary || "no special precautions noted"}.`,
-            `Background: Rounding ${rhythm}; streak ${row.roundReliabilityStreak || 0}.`,
-            `Assessment: Comfort ${comfortTrend}; ${mobilityNeed}; ${toiletNeed}.`,
-            `Recommendation: ${predicted}.`,
-          ];
-          const note = `Patient ${riskSummary || "low-risk"}; rounding ${rhythm} at ~${row.roundInterval || 60}m; no falls this shift; ${toiletNeed}; comfort ${comfortTrend}.`;
-          return { row, handoff, note };
-        };
 
         const buildPlaybookSuggestions = () => {
           NOVA_ENGINE.updateAll(rooms);
@@ -5197,7 +5218,6 @@
               title: "High mobility load",
               text: "For units with >40% high-mobility patients, tighten rounding to 45–60m on top 3 mobility rooms to cut care debt.",
               impact: "Care debt ↓, fall exposure ↓",
-              apply: { interval: 60, extraHighRisk: 0 },
             });
           }
           if (highRiskPerRn > 1.5) {
@@ -5205,7 +5225,6 @@
               title: "Distribute high-risk patients",
               text: "Splitting high-risk patients ~1 per RN improves reliability vs. stacking 2–3 per RN.",
               impact: "Reliability ↑, strain ↓",
-              apply: { rnCount: "", cnaCount: "", extraHighRisk: 0 },
             });
           }
           if ((metrics.staffingStrainRatio || 1) >= 1.4) {
@@ -5213,185 +5232,18 @@
               title: "Strain relief",
               text: "High strain detected; adding 0.5–1 CNA or shortening intervals on overdue rooms reduces care debt.",
               impact: "Strain ↓, care debt ↓",
-              apply: { cnaCount: Math.ceil(Object.keys(metrics.staffStats || {}).length * 0.5), interval: 60 },
             });
           }
           if (suggestions.length === 0) {
             suggestions.push({
               title: "Balanced",
-              text: "Current patterns look balanced. Keep monitoring and use Autopilot to hold gains.",
+              text: "Current patterns look balanced. Keep monitoring to hold gains.",
               impact: "Maintain reliability",
-              apply: {},
             });
           }
           return suggestions;
         };
 
-        const simulateDigitalTwin = (params = {}) => {
-          NOVA_ENGINE.updateAll(rooms);
-          const base = NOVA_ENGINE.computeUnitMetrics(rooms);
-          const radar = NOVA_ENGINE.computeRadar(rooms);
-          const staffEntries = Object.entries(base.staffStats || {});
-          const baseRn = staffEntries.filter(([, v]) => (v.role || "").toLowerCase() === "rn").length || Math.max(1, staffEntries.length);
-          const baseCna = staffEntries.filter(([, v]) => (v.role || "").toLowerCase() === "cna").length || Math.max(0, staffEntries.length - baseRn);
-          const newRn = Number(params.rnCount) || baseRn;
-          const newCna = Number(params.cnaCount) || baseCna;
-          const newStaff = Math.max(1, newRn + newCna);
-          const baseStaff = Math.max(1, staffEntries.length || baseRn + baseCna);
-          const interval = Number(params.interval) || 60;
-          const extraHighRisk = Number(params.extraHighRisk) || 0;
-
-          const strainAdj = baseStaff / newStaff;
-          const newStrain = Math.max(0.6, base.staffingStrainRatio * strainAdj);
-          const intervalFactor = interval / 60;
-          const careDebt = (base.careDebt || 0) * intervalFactor * newStrain;
-          const fallExposure = radar.falls + extraHighRisk * 10;
-          const reliability = Math.max(0, Math.min(100, (base.onTimePct || 0) * 100 / intervalFactor / newStrain));
-
-          return {
-            careDebt: careDebt.toFixed(1),
-            strain: newStrain.toFixed(2),
-            fallExposure: Math.round(fallExposure),
-            reliability: reliability.toFixed(1),
-            staffing: { rn: newRn, cna: newCna, total: newStaff },
-            deltas: {
-              careDebtDelta: ((careDebt - (base.careDebt || 0)) || 0).toFixed(1),
-              fallDelta: Math.round(fallExposure - radar.falls),
-            },
-          };
-        };
-
-        const renderAutopilot = () => {
-          const { tasks, metrics, prevented } = buildAutopilotTasks();
-          if (!autopilotBody) return;
-          const list = tasks
-            .map(
-              (t, idx) => `
-              <div class="cf-card" style="margin-bottom:8px;">
-                <div class="cf-subtitle">#${idx + 1} Dispatch</div>
-                <div><strong>Room ${t.room}</strong> — ${t.patient}</div>
-                <div>Action: ${t.action}</div>
-                <div>Drift: ${t.drift}% · Risk: ${t.risk || "—"}</div>
-                <div>Best staff: <strong>${t.staff}</strong></div>
-              </div>
-            `
-            )
-            .join("");
-          autopilotBody.innerHTML = `
-            <div class="info-note">Autopilot selects the next best tasks and dispatches them to the least-loaded team member. (Demo mode — not sending live.)</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
-              <div class="cf-card" style="flex:1; min-width:220px;">
-                <div class="cf-subtitle">Tasks queued</div>
-                <div><strong>${tasks.length}</strong> pending micro-tasks</div>
-                <div>Prevented overdue (est): ${prevented}</div>
-              </div>
-              <div class="cf-card" style="flex:1; min-width:220px;">
-                <div class="cf-subtitle">Alarm debt avoided</div>
-                <div>Silent saves: ${metrics.silentSaves || 0}</div>
-                <div>Care debt: ${(metrics.careDebt || 0).toFixed(1)}</div>
-              </div>
-              <div class="cf-card" style="flex:1; min-width:220px;">
-                <div class="cf-subtitle">Staff load</div>
-                <div>Strain ratio: ${metrics.staffingStrainRatio.toFixed(2)}</div>
-                <div>Heaviest load: ${metrics.busiest ? metrics.busiest.name : "N/A"}</div>
-              </div>
-              <div class="cf-card" style="flex:1; min-width:220px;">
-                <div class="cf-subtitle">Dispatch log</div>
-                <div>${autopilotLog.length} batches sent</div>
-                ${autopilotLog.length ? `<div style="font-size:11px; color:#47566f;">Last: ${new Date(autopilotLog[autopilotLog.length - 1].ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>` : ""}
-              </div>
-            </div>
-            ${list || "<div class='cf-desc'>No active patients to dispatch.</div>"}
-          `;
-          const emailText = [
-            "NOVA Autopilot Dispatch",
-            `Tasks queued: ${tasks.length}, Prevented overdue (est): ${prevented}`,
-            `Silent saves: ${metrics.silentSaves || 0}, Care debt: ${(metrics.careDebt || 0).toFixed(1)}, Strain ratio: ${metrics.staffingStrainRatio.toFixed(2)}`,
-            "",
-            ...tasks.map(
-              (t, idx) =>
-                `#${idx + 1} Room ${t.room} — ${t.patient} | Action: ${t.action} | Drift ${t.drift}% | Risk ${t.risk || "—"} | Staff: ${t.staff}`
-            ),
-          ].join("\n");
-          autopilotBody.dataset.emailBody = emailText;
-          autopilotBody.dataset.tasksJson = JSON.stringify(tasks);
-          if (autopilotEmailPreview) {
-            autopilotEmailPreview.style.display = tasks.length ? "block" : "none";
-            autopilotEmailPreview.innerHTML = `<div style="font-weight:700; margin-bottom:4px;">Preview (email / text)</div><pre style="white-space:pre-wrap; margin:0;">${emailText}</pre>`;
-          }
-        };
-        // Equity Lens modal
-        const equityBackdrop = document.createElement("div");
-        equityBackdrop.className = "modal-backdrop";
-        equityBackdrop.innerHTML = `
-          <div class="modal" role="dialog" aria-modal="true" style="width:min(620px,90vw);">
-            <h3>Equity & Bias Lens</h3>
-            <div id="equityBody" style="font-size:12px; line-height:1.6; color:#10356b;"></div>
-            <div class="actions">
-              <button type="button" class="action-btn secondary" id="closeEquity">Close</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(equityBackdrop);
-        const equityBody = equityBackdrop.querySelector("#equityBody");
-        const closeEquityBtn = equityBackdrop.querySelector("#closeEquity");
-        const computePod = (roomNum) => {
-          if (!roomNum && roomNum !== 0) return "Unknown";
-          return `Pod ${Math.floor(Number(roomNum) / 10)}`;
-        };
-        const renderEquity = () => {
-          NOVA_ENGINE.updateAll(rooms);
-          const active = rooms.filter((r) => r.patient);
-          const groups = new Map();
-          active.forEach((r) => {
-            const pod = computePod(r.room);
-            const entry = groups.get(pod) || { rooms: 0, reliability: 0, need: 0, falls: 0, highRisk: 0 };
-            entry.rooms += 1;
-            entry.reliability += r.roomReliability || 0;
-            entry.need += r.novaNeedScore || 0;
-            entry.falls += r.novaFallScore || 0;
-            const fallLevel = classifyFallLevel(r);
-            if (fallLevel === "high" || fallLevel === "moderate") entry.highRisk += 1;
-            groups.set(pod, entry);
-          });
-          if (!groups.size) {
-            equityBody.innerHTML = "<div class='cf-desc'>No active patients.</div>";
-            return;
-          }
-          const rows = Array.from(groups.entries())
-            .map(([pod, data]) => {
-              const rel = data.rooms ? Math.round((data.reliability / data.rooms) * 100) : 0;
-              const needAvg = data.rooms ? Math.round(data.need / data.rooms) : 0;
-              const fallAvg = data.rooms ? Math.round(data.falls / data.rooms) : 0;
-              return `
-                <tr>
-                  <td>${pod}</td>
-                  <td>${rel}%</td>
-                  <td>${needAvg}</td>
-                  <td>${fallAvg}</td>
-                  <td>${data.highRisk}</td>
-                </tr>
-              `;
-            })
-            .join("");
-          equityBody.innerHTML = `
-            <div class="info-note" style="margin:0 0 8px;">
-              Safety & equity lens to spot under-served pods or groups. Not for blame—pattern detection only.
-            </div>
-            <table class="priority-table">
-              <thead>
-                <tr>
-                  <th>Pod</th>
-                  <th>Reliability</th>
-                  <th>Need avg</th>
-                  <th>Fall pressure</th>
-                  <th>High-risk count</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          `;
-        };
 
         const setupCollapsibles = () => {
           document.querySelectorAll(".collapse-btn").forEach((btn) => {
@@ -5412,7 +5264,6 @@
           });
         };
 
-        renderNovaQualityBox();
         autoScaleBoard();
         renderShowers();
         renderShowerAlertBar();
@@ -5435,143 +5286,20 @@
         quietBackdrop.addEventListener("click", (e) => {
           if (e.target === quietBackdrop) quietBackdrop.style.display = "none";
         });
-        if (autopilotBtn) {
-          autopilotBtn.addEventListener("click", () => {
-            renderAutopilot();
-            autopilotBackdrop.style.display = "flex";
-          });
-        }
-        const renderTwin = () => {
-          if (!twinBody) return;
-          const params = {
-            rnCount: twinRn?.value,
-            cnaCount: twinCna?.value,
-            interval: twinInterval?.value,
-            extraHighRisk: twinHighRisk?.value,
-          };
-          const sim = simulateDigitalTwin(params);
-          const careDebtVal = Number(sim.careDebt);
-          const strainVal = Number(sim.strain);
-          const fallVal = Number(sim.fallExposure);
-          const reliabilityVal = Number(sim.reliability);
-          const recs = [];
-          if (strainVal >= 1.4) recs.push("Strain is high: add 1 RN/CNA or reduce interval to 60m for the busiest pods.");
-          else if (strainVal >= 1.15) recs.push("Strain is moderate: consider flexing 0.5 FTE or tighter rounding for high-risk rooms.");
-          if (careDebtVal > 5) recs.push("Care debt elevated: add a CNA or Autopilot assist to overdue rooms for 1 hour.");
-          if (fallVal >= 90) recs.push("Fall exposure high: pair lift assists and shorten toileting cadence.");
-          if (reliabilityVal < 75) recs.push("Reliability dipping: tighten interval or redistribute high-risk patients.");
-          if (!recs.length) recs.push("Scenario is balanced. Proceed with planned staffing.");
-          twinBody.innerHTML = `
-            <div class="cf-card" style="margin-bottom:8px;">
-              <div class="cf-subtitle">Projected metrics</div>
-              <div>Care debt: <strong>${sim.careDebt}</strong> (${sim.deltas.careDebtDelta >= 0 ? "+" : ""}${sim.deltas.careDebtDelta})</div>
-              <div>Staff strain ratio: <strong>${sim.strain}</strong></div>
-              <div>Fall exposure: <strong>${sim.fallExposure}</strong> (${sim.deltas.fallDelta >= 0 ? "+" : ""}${sim.deltas.fallDelta})</div>
-              <div>Reliability score: <strong>${sim.reliability}%</strong></div>
-            </div>
-            <div class="cf-card" style="margin-bottom:8px;">
-              <div class="cf-subtitle">Staffing scenario</div>
-              <div>RN: ${sim.staffing.rn} · CNA: ${sim.staffing.cna} · Total: ${sim.staffing.total}</div>
-              <div>Rounding interval target: ${params.interval || 60} minutes</div>
-              <div>Extra high-risk patients: ${params.extraHighRisk || 0}</div>
-            </div>
-            <div class="info-note">Care debt = overdue-round equivalents. Strain ratio compares heaviest load vs average. Fall exposure = channel pressure from falls. Reliability = estimated on-time rounding under this scenario.</div>
-            <div class="cf-card" style="margin-top:8px;">
-              <div class="cf-subtitle">Recommendations</div>
-              <ul style="margin:6px 0 0 16px; color:#10356b;">
-                ${recs.map((r) => `<li>${r}</li>`).join("")}
-              </ul>
-            </div>
-          `;
-        };
-        if (twinBtn) {
-          twinBtn.addEventListener("click", () => {
-            renderTwin();
-            twinBackdrop.style.display = "flex";
-          });
-        }
-        const renderCopilot = () => {
-          const content = buildCopilotContent();
-          if (!content || !copilotBody) {
-            copilotBody.innerHTML = "<div class='cf-desc'>No patient selected.</div>";
-            return;
-          }
-          const { row, handoff, note } = content;
-          copilotBody.innerHTML = `
-            <div class="info-note" style="margin:0 0 8px;">NOVA Copilot drafts handoff and documentation text from Storyline + NOVA signals.</div>
-            <div class="cf-card" style="margin-bottom:8px;">
-              <div class="cf-subtitle">SBAR / Handoff</div>
-              <ul style="margin:6px 0 0 16px; color:#10356b;">${handoff.map((h) => `<li>${h}</li>`).join("")}</ul>
-            </div>
-            <div class="cf-card">
-              <div class="cf-subtitle">Nursing note (draft)</div>
-              <div>${note}</div>
-            </div>
-          `;
-          copilotBody.dataset.clipboard = [...handoff.map((h) => `• ${h}`), "", "Note:", note].join("\n");
-        };
-        if (copilotBtn) {
-          copilotBtn.addEventListener("click", () => {
-            renderCopilot();
-            copilotBackdrop.style.display = "flex";
-          });
-        }
-        if (copyCopilotBtn) {
-          copyCopilotBtn.addEventListener("click", async () => {
-            const text = copilotBody?.dataset?.clipboard || copilotBody?.innerText || "";
-            try {
-              await navigator.clipboard.writeText(text);
-              copyCopilotBtn.textContent = "Copied!";
-              setTimeout(() => (copyCopilotBtn.textContent = "Copy text"), 1200);
-            } catch (err) {
-              copyCopilotBtn.textContent = "Copy failed";
-              setTimeout(() => (copyCopilotBtn.textContent = "Copy text"), 1200);
-            }
-          });
-        }
-        if (closeCopilotBtn) {
-          closeCopilotBtn.addEventListener("click", () => {
-            copilotBackdrop.style.display = "none";
-          });
-        }
-        copilotBackdrop.addEventListener("click", (e) => {
-          if (e.target === copilotBackdrop) copilotBackdrop.style.display = "none";
-        });
-        const applyTwinScenario = (params = {}) => {
-          if (twinRn && params.rnCount !== undefined) twinRn.value = params.rnCount;
-          if (twinCna && params.cnaCount !== undefined) twinCna.value = params.cnaCount;
-          if (twinInterval && params.interval !== undefined) twinInterval.value = params.interval;
-          if (twinHighRisk && params.extraHighRisk !== undefined) twinHighRisk.value = params.extraHighRisk;
-          renderTwin();
-          twinBackdrop.style.display = "flex";
-        };
         const renderPlaybooks = () => {
           if (!playbookBody) return;
           const suggestions = buildPlaybookSuggestions();
           playbookBody.innerHTML = suggestions
             .map((s) => {
-              const encoded = encodeURIComponent(JSON.stringify(s.apply || {}));
               return `
                 <div class="cf-card" style="margin-bottom:8px;">
                   <div class="cf-subtitle">${s.title}</div>
                   <div>${s.text}</div>
                   <div style="color:#47566f; margin-top:4px;">Impact: ${s.impact}</div>
-                  <button class="cf-btn" style="margin-top:6px;" data-apply="${encoded}">Apply to Digital Twin</button>
                 </div>
               `;
             })
             .join("");
-          playbookBody.querySelectorAll("button[data-apply]").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              try {
-                const decoded = decodeURIComponent(btn.dataset.apply || "");
-                const params = JSON.parse(decoded || "{}");
-                applyTwinScenario(params);
-              } catch (err) {
-                console.warn("Unable to apply scenario", err);
-              }
-            });
-          });
         };
         if (playbookBtn) {
           playbookBtn.addEventListener("click", () => {
@@ -5586,82 +5314,6 @@
         }
         playbookBackdrop.addEventListener("click", (e) => {
           if (e.target === playbookBackdrop) playbookBackdrop.style.display = "none";
-        });
-        [twinRn, twinCna, twinInterval, twinHighRisk].forEach((input) => {
-          if (input) input.addEventListener("input", renderTwin);
-        });
-        if (closeTwinBtn) {
-          closeTwinBtn.addEventListener("click", () => {
-            twinBackdrop.style.display = "none";
-          });
-        }
-        twinBackdrop.addEventListener("click", (e) => {
-          if (e.target === twinBackdrop) twinBackdrop.style.display = "none";
-        });
-        if (emailAutopilotBtn) {
-          emailAutopilotBtn.addEventListener("click", () => {
-            const bodyText = autopilotBody?.dataset?.emailBody || autopilotBody?.innerText || "";
-            const mailto = `mailto:?subject=${encodeURIComponent("NOVA Autopilot Dispatch")}&body=${encodeURIComponent(bodyText)}`;
-            window.location.href = mailto;
-            if (autopilotEmailPreview) {
-              autopilotEmailPreview.style.display = "block";
-            }
-          });
-        }
-        if (textAutopilotBtn) {
-          textAutopilotBtn.addEventListener("click", () => {
-            const bodyText = autopilotBody?.dataset?.emailBody || autopilotBody?.innerText || "";
-            const smsUrl = `sms:?&body=${encodeURIComponent(bodyText)}`;
-            window.location.href = smsUrl;
-            if (autopilotEmailPreview) {
-              autopilotEmailPreview.style.display = "block";
-            }
-          });
-        }
-        if (dispatchAutopilotBtn) {
-          dispatchAutopilotBtn.addEventListener("click", () => {
-            try {
-              const tasks = autopilotBody?.dataset?.tasksJson ? JSON.parse(autopilotBody.dataset.tasksJson) : [];
-              tasks.forEach((t) => {
-                const row = rooms.find((r) => r.room === t.room);
-                if (!row) return;
-                if (!row.nurse) {
-                  row.nurse = t.staff && t.staff !== "Unassigned" ? t.staff : row.nurse;
-                } else if (!row.cna) {
-                  row.cna = t.staff && t.staff !== "Unassigned" ? t.staff : row.cna;
-                }
-              });
-              autopilotLog.push({ ts: Date.now(), tasks });
-              renderTable();
-              renderAutopilot();
-              persistState();
-              openFeedback("Autopilot dispatched", `NOVA Autopilot sent ${tasks.length} micro-tasks to staff.`);
-            } catch (err) {
-              console.warn("Unable to dispatch tasks", err);
-            }
-          });
-        }
-        if (closeAutopilotBtn) {
-          closeAutopilotBtn.addEventListener("click", () => {
-            autopilotBackdrop.style.display = "none";
-          });
-        }
-        autopilotBackdrop.addEventListener("click", (e) => {
-          if (e.target === autopilotBackdrop) autopilotBackdrop.style.display = "none";
-        });
-        if (equityBtn) {
-          equityBtn.addEventListener("click", () => {
-            renderEquity();
-            equityBackdrop.style.display = "flex";
-          });
-        }
-        if (closeEquityBtn) {
-          closeEquityBtn.addEventListener("click", () => {
-            equityBackdrop.style.display = "none";
-          });
-        }
-        equityBackdrop.addEventListener("click", (e) => {
-          if (e.target === equityBackdrop) equityBackdrop.style.display = "none";
         });
 
         if (openCommandBtn) {
@@ -5696,10 +5348,12 @@
               const round = btn.dataset.round;
               const iso = btn.dataset.iso;
               const fall = btn.dataset.fall;
+              const mode = btn.dataset.mode;
               let active = false;
               if (round) active = filterState.round === round;
               if (iso) active = filterState.iso;
               if (fall) active = filterState.fall;
+              if (mode) active = modeLens === mode;
               btn.classList.toggle("active", active);
               btn.setAttribute("aria-pressed", active ? "true" : "false");
             });
@@ -5716,41 +5370,38 @@
             if (btn.dataset.fall) {
               filterState.fall = !filterState.fall;
             }
+            if (btn.dataset.mode) {
+              modeLens = btn.dataset.mode;
+            }
             refreshActive();
             renderTable();
           });
           refreshActive();
         }
 
-        if (modeLensesEl) {
-          const refreshLenses = () => {
-            modeLensesEl.querySelectorAll(".lens-chip").forEach((btn) => {
-              const mode = btn.dataset.mode || "all";
-              const active = mode === modeLens;
-              btn.classList.toggle("active", active);
-              btn.setAttribute("aria-pressed", active ? "true" : "false");
-            });
-          };
-          modeLensesEl.addEventListener("click", (e) => {
-            const btn = e.target.closest(".lens-chip");
-            if (!btn) return;
-            modeLens = btn.dataset.mode || "all";
-            refreshLenses();
-            renderTable();
-          });
-          refreshLenses();
-        }
 
         // Keyboard shortcuts for selected row
         window.addEventListener("keydown", (e) => {
           const tag = e.target.tagName.toLowerCase();
           if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey) return;
+          
+          // Escape key closes any open modal
+          if (e.key === "Escape") {
+            const openModals = document.querySelectorAll('.modal-backdrop[style*="flex"]');
+            openModals.forEach(modal => {
+              const closeBtn = modal.querySelector('button[id*="close"], button[class*="close"]');
+              if (closeBtn) closeBtn.click();
+              else modal.style.display = "none";
+            });
+            return;
+          }
+          
           if (!selectedRoom) return;
-          if (e.key === "c") {
+          if (e.key === "c" || e.key === "C") {
             completeRound(selectedRoom);
-          } else if (e.key === "x") {
+          } else if (e.key === "x" || e.key === "X") {
             emptyRoom(selectedRoom);
-          } else if (e.key === "e") {
+          } else if (e.key === "e" || e.key === "E") {
             openModal();
           }
         });

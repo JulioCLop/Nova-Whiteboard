@@ -10,17 +10,17 @@
     />
     <style>
       :root {
-        --blue: #0d7bff;
-        --blue-deep: #0a4fb8;
+        --blue: #1b6fd9;
+        --blue-deep: #0d3b73;
         --paper: #ffffff;
-        --sheet-border: #d5d8e0;
-        --cell-border: #e1e6ef;
-        --yellow: #fff8d6;
-        --muted: #6b7484;
-        --text: #111827;
-        --surface: #f8faff;
-        --shadow: 0 16px 60px rgba(15, 23, 42, 0.12);
-        --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+        --sheet-border: #d2deeb;
+        --cell-border: #dbe5f0;
+        --yellow: #fff2cc;
+        --muted: #6f8296;
+        --text: #0f2742;
+        --surface: #f3f7fb;
+        --shadow: 0 24px 60px rgba(16, 35, 66, 0.12);
+        --shadow-soft: 0 10px 24px rgba(16, 35, 66, 0.08);
       }
       * {
         box-sizing: border-box;
@@ -28,7 +28,9 @@
       body {
         margin: 0;
         font-family: Rubik, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        background: #eef2f9;
+        background: radial-gradient(circle at top, rgba(27, 111, 217, 0.08), transparent 55%),
+          radial-gradient(circle at 80% 20%, rgba(26, 166, 163, 0.08), transparent 60%),
+          var(--surface);
         color: var(--text);
         padding: 12px;
       }
@@ -48,8 +50,8 @@
         gap: 12px;
         padding: 10px 12px;
         border-radius: 12px;
-        background: linear-gradient(135deg, rgba(13, 123, 255, 0.08), rgba(10, 79, 184, 0.04));
-        border: 1px solid #dbe4f3;
+        background: linear-gradient(135deg, rgba(27, 111, 217, 0.12), rgba(26, 166, 163, 0.08));
+        border: 1px solid #d7e4f2;
       }
       .title {
         margin: 0;
@@ -63,23 +65,23 @@
         font-size: 13px;
       }
       .btn {
-        background: linear-gradient(135deg, #00e0ff, #0ea5e9);
-        color: #0b1224;
-        border: 1px solid #dbe4f3;
+        background: linear-gradient(135deg, #1b6fd9, #1aa6a3);
+        color: #ffffff;
+        border: 1px solid #cfe0f3;
         padding: 10px 14px;
         border-radius: 10px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 10px 30px rgba(0, 224, 255, 0.25);
+        box-shadow: 0 10px 30px rgba(27, 111, 217, 0.22);
         transition: transform 120ms ease, box-shadow 120ms ease;
       }
       .btn.secondary {
         background: #eef4ff;
-        color: #0b3f78;
+        color: var(--blue-deep);
       }
       .btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 14px 36px rgba(13, 123, 255, 0.26);
+        box-shadow: 0 14px 36px rgba(27, 111, 217, 0.26);
       }
       .grid {
         display: grid;
@@ -124,7 +126,7 @@
         font-weight: 700;
         border: 1px solid #d8e3ff;
         background: #eef4ff;
-        color: #0b3f78;
+        color: var(--blue-deep);
       }
       .chip.warn { background: #fff6e5; color: #a15a00; border-color: #f5d9a5; }
       .chip.danger { background: #ffeaea; color: #b91c1c; border-color: #f2c1c1; }
@@ -159,7 +161,7 @@
         display: flex;
         flex-direction: column;
         font-weight: 700;
-        color: #0b3f78;
+        color: var(--blue-deep);
         font-size: 12px;
       }
       .whatif input {
