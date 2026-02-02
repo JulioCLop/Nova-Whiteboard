@@ -1,0 +1,250 @@
+<main class="main">
+      <section class="panel">
+        <div class="table-wrap">
+          <div class="table-actions">
+            <h2 class="board-title">NOVA Whiteboard</h2>
+            <div style="display: flex; gap: 6px; align-items:center; flex-wrap: wrap;">
+              <button class="action-btn" id="completeRound" aria-label="Complete round for selected room" title="Complete round (C)">
+                Complete round
+              </button>
+              <button class="action-btn" id="openCommandCenter" aria-label="Open NOVA Command Center dashboard">
+                NOVA Command Center
+              </button>
+              <button class="action-btn danger" id="markDischarge" aria-label="Mark selected room as empty" title="Mark empty (X)">
+                Mark empty room
+              </button>
+            <button class="action-btn secondary" id="togglePrivacy" aria-label="Toggle privacy mode" aria-pressed="false">
+              Privacy mode
+            </button>
+            <button class="action-btn" id="openEditor" aria-label="Edit selected room details" title="Edit (E)">Edit selected</button>
+            <button class="action-btn secondary" id="resetBoardBtn" aria-label="Reset board to default state">Reset board</button>
+            <div class="dropdown" style="position: relative;">
+              <button class="action-btn secondary" id="moreActions">More ▾</button>
+                <div id="moreMenu" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #dbe4f3; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); min-width:180px; z-index:2000;">
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none;" id="showQuietSafety">Quiet Safety</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openStats">Unit Stats</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="openPriorityQueue">Priority Queue</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="generateHandoff">Generate handoff</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showAssignmentInfo">CareFusion Assignment</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showNovaOverview">NOVA Overview</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showOnTime">On-time Rounds</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showFalls">FallWatch™</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3;" id="showShowerModal">Shower Tracker</button>
+                  <button class="action-btn secondary" style="width:100%; border:none; border-radius:0; box-shadow:none; border-top:1px solid #dbe4f3; border-bottom-left-radius:8px; border-bottom-right-radius:8px;" id="openPlaybooks">Playbook Suggestions</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="table-controls" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+            <div class="filters" id="filters">
+            <span style="font-weight:700; color:#0b3f78;">Filter:</span>
+            <button class="filter-chip" data-round="all">All</button>
+            <button class="filter-chip" data-round="soon">Soon</button>
+            <button class="filter-chip" data-round="due">Due</button>
+            <button class="filter-chip" data-round="critical">Critical</button>
+            <button class="filter-chip" data-iso="true">Isolation</button>
+            <button class="filter-chip" data-fall="true">Fall risk</button>
+            <span style="font-weight:700; color:#0b3f78; margin-left:12px;">Focus:</span>
+            <button class="filter-chip" data-mode="all">All</button>
+            <button class="filter-chip" data-mode="falls">Falls</button>
+            <button class="filter-chip" data-mode="mobility">Mobility</button>
+            <button class="filter-chip" data-mode="toileting">Toileting</button>
+            <button class="filter-chip" data-mode="comfort">Comfort</button>
+            </div>
+          </div>
+          <div class="table-summary" id="tableSummary">
+            <span><strong>Due:</strong> 0</span>
+            <span><strong>Critical:</strong> 0</span>
+            <span><strong>Avg need:</strong> 0</span>
+            <span><strong>Staffing strain:</strong> Balanced</span>
+          </div>
+          <table class="bed-table" aria-label="Bed assignments">
+        <thead>
+          <tr>
+            <th class="status">Status</th>
+            <th class="room">Room</th>
+                <th class="round">Rounding</th>
+                <th class="nurse">Nurse</th>
+                <th class="cna">CNA</th>
+                <th class="patient">Patient</th>
+                <th class="physician">Physician</th>
+                <th class="sp">Special Considerations</th>
+                <th>Iso</th>
+                <th>Needs</th>
+                <th>Risk</th>
+                <th>Therapy</th>
+            <th>Assist</th>
+            <th>Fall</th>
+            <th>Diet</th>
+            <th style="width:90px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bedBody"></tbody>
+      </table>
+        </div>
+      </section>
+
+      <!-- right column -->
+      <aside class="panel">
+        <div id="showerAlertBanner" class="shower-banner" aria-live="polite" style="margin-bottom:8px; display:none;">
+          <h4>Showers</h4>
+          <div id="showerAlertItems" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;"></div>
+        </div>
+        <div class="box census collapsible collapsed" id="apptBox" style="min-height:0;">
+          <div class="box-heading">
+            <h3>Appointments <span id="apptCount"></span></h3>
+            <button class="collapse-btn" data-open="false">Show</button>
+          </div>
+          <div class="box-body" id="apptContent">
+            <div id="apptBodyWrap" style="overflow-y:auto; max-height:100%;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Room</th>
+                    <th>Time</th>
+                    <th>Pickup</th>
+                  </tr>
+                </thead>
+                <tbody id="apptBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="box collapsible collapsed" id="codeBox" style="margin-top: 8px; min-height:0;">
+          <div class="box-heading">
+            <h3>Code Team <span id="codeCount"></span></h3>
+            <button class="collapse-btn" data-open="false">Show</button>
+          </div>
+          <div class="box-body" id="codeContent">
+            <div id="codeBodyWrap" style="overflow-y:auto; max-height:100%;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Role</th>
+                    <th>Assigned</th>
+                  </tr>
+                </thead>
+                <tbody id="codeBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="box collapsible collapsed" id="showerBox" style="margin-top: 8px; min-height:0;">
+          <div class="box-heading">
+            <h3>Showers Schedule <span id="showerCount"></span></h3>
+            <button class="collapse-btn" data-open="false">Show</button>
+          </div>
+          <div class="box-body" id="showerContent">
+            <div id="showerBodyWrap" style="overflow-y:auto; max-height:100%;">
+              <table class="shower-table">
+                <thead>
+                  <tr>
+                    <th>Room</th>
+                    <th>Last shower</th>
+                    <th>Next due</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="showerBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="box collapsible collapsed" id="toiletBox" style="margin-top: 8px; min-height:0;">
+          <div class="box-heading">
+            <h3>Toileting Priority <span id="toiletPriorityCount"></span></h3>
+            <button class="collapse-btn" data-open="false">Show</button>
+          </div>
+          <div class="box-body" id="toiletContent">
+            <div id="toiletBodyWrap" style="overflow-y:auto; max-height:100%;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Room</th>
+                    <th>Need</th>
+                    <th>Assist</th>
+                  </tr>
+                </thead>
+                <tbody id="toiletPriorityBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="box collapsible collapsed" data-open="false" style="margin-top: 8px;">
+          <div class="box-heading">
+            <h3>Staffing & Strain</h3>
+            <button class="collapse-btn" data-open="false">Show</button>
+          </div>
+          <div class="box-body">
+            <div id="staffFairnessBody" style="font-size:11px; color:#10356b; line-height:1.5;"></div>
+          </div>
+        </div>
+        </aside>
+      </main>
+    <datalist id="isoList">
+      <option value="🟦 Contact"></option>
+      <option value="🟥 Droplet"></option>
+      <option value="🟪 Airborne"></option>
+      <option value="🟫 Enhanced"></option>
+      <option value="🟩 None"></option>
+      <option value="🅲 C Diff"></option>
+    </datalist>
+    <datalist id="nList">
+      <option value="💊 Pain control"></option>
+      <option value="💧 IV fluids"></option>
+      <option value="🥤 Hydration focus"></option>
+      <option value="🧊 Cooling / ice"></option>
+      <option value="🛁 Toileting help"></option>
+      <option value="🧘 Anxiety support"></option>
+      <option value="🩹 Wound care"></option>
+      <option value="🛏️ Reposition q2"></option>
+    </datalist>
+    <datalist id="tList">
+      <option value="🏃 Independent mobility"></option>
+      <option value="🚶 Assist to walk"></option>
+      <option value="🪜 Walker assist"></option>
+      <option value="♿ Wheelchair"></option>
+      <option value="🏗️ Lift only / bed rest"></option>
+      <option value="🧘 Rehab / OT"></option>
+      <option value="🛏️ BRP"></option>
+    </datalist>
+    <datalist id="assistList">
+      <option value="🤝 Standby"></option>
+      <option value="🧑‍🦽 Wheelchair"></option>
+      <option value="🛏️ Bed rest"></option>
+      <option value="🪜 Walker"></option>
+      <option value="🧑‍⚕️ Lift team"></option>
+      <option value="🪑 Sit assist"></option>
+    </datalist>
+    <datalist id="spList">
+      <option value="🎀 Gift at bedside"></option>
+      <option value="⭐ VIP / family liaison"></option>
+      <option value="🧩 Psych support"></option>
+      <option value="🧘 Anxiety watch"></option>
+      <option value="🔔 Alarm fatigue plan"></option>
+      <option value="📞 Interpreter needed"></option>
+      <option value="🧊 Ice pack / cooling"></option>
+      <option value="🤝 Sitter / 1:1"></option>
+      <option value="🛡️ Elopement precautions"></option>
+      <option value="🤒 Comfort focus"></option>
+      <option value="🪑 Family meeting planned"></option>
+    </datalist>
+    <datalist id="riskList">
+      <option value="🛑 High fall risk"></option>
+      <option value="⚠️ Moderate fall risk"></option>
+      <option value="⭐ Low fall risk"></option>
+      <option value="💊 Pain watch"></option>
+      <option value="🧩 Confused/redirect"></option>
+      <option value="🚪 Elopement risk"></option>
+    </datalist>
+    <datalist id="fallList">
+      <option value="⭐ Low"></option>
+      <option value="⚠️ Moderate"></option>
+      <option value="🛑 High"></option>
+      <option value="✨ Monitor"></option>
+      <option value="🔔 Bed alarm"></option>
+    </datalist>
