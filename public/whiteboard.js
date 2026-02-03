@@ -2134,7 +2134,11 @@
           renderToiletingPriority();
           renderShowerAlertBar();
           updateNovaTasks();
-          autoScaleBoard(rowsToRender.length || rooms.length);
+          const filterActive = filterState.round !== "all" || filterState.iso || filterState.fall;
+          const scaleCount = filterActive
+            ? cleanRooms.length
+            : rowsToRender.length || cleanRooms.length;
+          autoScaleBoard(scaleCount);
           persistState();
           persistSnapshot();
           // Update summary
